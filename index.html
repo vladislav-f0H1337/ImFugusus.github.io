@@ -133,11 +133,12 @@
 
     <script>
         let coins = localStorage.getItem('fugu_coins') ? parseInt(localStorage.getItem('fugu_coins')) : 0;
-        const symbols = ['🦆', '💎', '🍋', '7️⃣', '🐡'];
+        const symbols = ['🐡', '🦆', '💎', '7️⃣'];
 
         function updateDisplay() {
             document.getElementById('coins').innerText = coins;
-            document.getElementById('bet-btn').disabled = coins < 5;
+            const btn = document.getElementById('bet-btn');
+            if(btn) btn.disabled = coins < 10;
         }
 
         function addCoin() {
@@ -149,10 +150,20 @@
         function playSlots() {
             if (coins < 10) return;
             coins -= 10;
+            
             const s = () => symbols[Math.floor(Math.random() * symbols.length)];
             const r1 = s(), r2 = s(), r3 = s();
+            
             document.getElementById('slot-display').innerText = `${r1} ${r2} ${r3}`;
-            if (r1 === r2 && r2 === r3) coins += 1000;
+
+            if (r1 === r2 && r2 === r3) {
+                const win = Math.floor(Math.random() * (1000 - 500 + 1)) + 500;
+                coins += win;
+            } 
+            else if (r1 === r2 || r2 === r3 || r1 === r3) {
+                coins += 15;
+            }
+
             save();
             updateDisplay();
         }
