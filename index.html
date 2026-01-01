@@ -9,38 +9,36 @@
         :root { --bg: #0f0f0f; --card-bg: #1a1a1a; --accent: #00f2ff; }
         body { font-family: sans-serif; background-color: var(--bg); color: white; margin: 0; display: flex; flex-direction: column; align-items: center; padding: 20px; }
         .container { width: 100%; max-width: 400px; text-align: center; }
-        .link-btn { display: flex; align-items: center; justify-content: center; padding: 15px; margin-bottom: 12px; border-radius: 12px; text-decoration: none; color: white; font-weight: bold; background: var(--card-bg); border: 1px solid rgba(255,255,255,0.05); cursor: pointer; }
-        .game-section { margin-top: 20px; background: var(--card-bg); padding: 20px; border-radius: 20px; border: 1px solid #333; }
+        .link-btn { display: flex; align-items: center; justify-content: center; padding: 15px; margin-bottom: 12px; border-radius: 12px; text-decoration: none; color: white; font-weight: bold; background: var(--card-bg); border: 1px solid rgba(255,255,255,0.05); }
+        .game-section { margin-top: 30px; background: var(--card-bg); padding: 20px; border-radius: 20px; border: 1px solid #333; }
         .balance span { color: var(--accent); font-weight: bold; }
-        .clicker-btn { background: var(--accent); color: black; border: none; padding: 12px 30px; border-radius: 50px; font-weight: bold; margin: 15px 0; cursor: pointer; width: 80%; }
-        .slots { display: flex; justify-content: center; gap: 10px; font-size: 2rem; margin: 15px 0; background: #000; padding: 10px; border-radius: 10px; min-height: 50px; align-items: center; border: 2px solid #222; }
-        .bet-btn { background: #ff9900; color: white; border: none; padding: 15px 20px; border-radius: 12px; cursor: pointer; width: 100%; font-weight: bold; font-size: 1rem; }
-        .bet-btn:disabled { background: #444; color: #888; cursor: not-allowed; }
+        .clicker-btn { background: var(--accent); color: black; border: none; padding: 12px 30px; border-radius: 50px; font-weight: bold; margin: 15px 0; cursor: pointer; }
+        .slots { display: flex; justify-content: center; gap: 10px; font-size: 2rem; margin: 15px 0; background: #000; padding: 10px; border-radius: 10px; min-height: 50px; align-items: center; }
+        .bet-btn { background: #ff9900; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; width: 100%; font-weight: bold; margin-bottom: 10px; }
+        .reg-btn { background: #444; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; width: 100%; font-weight: bold; }
+        .bet-btn:disabled { background: #222; color: #555; cursor: not-allowed; }
         .meme-img { width: 100%; border-radius: 10px; margin-top: 15px; border: 1px solid #222; }
-        .nav-btn { background: #333; font-size: 0.9rem; margin-top: 10px; }
     </style>
 </head>
 <body>
-
     <div class="container">
-        <div id="reg-section">
-            <button class="link-btn" style="width:100%;" onclick="startReg()">
-                <i class="fas fa-user-circle"></i> &nbsp; <span id="user-display">Профиль: Гость</span>
-            </button>
-        </div>
-
-        <a href="https://t.me/Logovo_bomja_fugu" class="link-btn" target="_blank"><i class="fab fa-telegram"></i> Таблица лидеров</a>
+        <div style="margin-bottom:10px; color:#888;">Игрок: <span id="user-display" style="color:white">Гость</span></div>
+        <a href="https://t.me/cherebuhh_tv" class="link-btn" target="_blank">Канал Кореша</a>
+        <a href="https://t.me/Logovo_bomja_fugu" class="link-btn" target="_blank">Моё Логово</a>
 
         <div class="game-section">
             <div class="balance">Баланс: <span id="coins">0</span> 💰</div>
-            <button class="clicker-btn" onclick="addCoin()">ЖМИ! ЖМИ!</button>
+            <button class="clicker-btn" onclick="addCoin()">ТАПАТЬ</button>
             <div class="slots" id="slot-display">🎰 🎰 🎰</div>
             <button class="bet-btn" onclick="playSlots()" id="bet-btn">Депнуть 10</button>
+            <button class="reg-btn" onclick="register()">РЕГИСТРАЦИЯ</button>
         </div>
 
         <img src="IMG_20260101_145923_474.jpg" class="meme-img">
         <img src="IMG_20260101_145902_173.jpg" class="meme-img">
         <img src="IMG_20260101_145849_625.jpg" class="meme-img">
+        <img src="IMG_20260101_151706_375.jpg" class="meme-img">
+        <img src="IMG_20260101_151704_265.jpg" class="meme-img">
     </div>
 
     <script>
@@ -52,19 +50,18 @@
         const symbols = ['🐡', '🦆', '💎', '7️⃣'];
         let isCooldown = false;
 
-        function startReg() {
-            const newName = prompt("Введите ваш игровой ник:");
-            if (newName) {
-                userName = newName;
-                localStorage.setItem('fugu_user', userName);
+        function register() {
+            const name = prompt("Введите ваш ник:");
+            if(name) {
+                userName = name;
+                localStorage.setItem('fugu_user', name);
                 updateDisplay();
-                alert("Ник успешно изменен!");
             }
         }
 
         function updateDisplay() {
             document.getElementById('coins').innerText = coins;
-            document.getElementById('user-display').innerText = "Профиль: " + userName;
+            document.getElementById('user-display').innerText = userName;
             const btn = document.getElementById('bet-btn');
             if (!isCooldown) {
                 btn.disabled = coins < 10;
@@ -89,23 +86,20 @@
             if (coins < 10 || isCooldown) return;
 
             const balBefore = coins;
-            coins -= 5;
+            coins -= 10;
             isCooldown = true;
             
             const btn = document.getElementById('bet-btn');
             btn.disabled = true;
 
             let timer = 3;
-            btn.innerText = `Жди ${timer} сек...`;
-            
             const interval = setInterval(() => {
+                btn.innerText = `Жди ${timer} сек...`;
                 timer--;
-                if (timer <= 0) {
+                if (timer < 0) {
                     clearInterval(interval);
                     isCooldown = false;
                     updateDisplay();
-                } else {
-                    btn.innerText = `Жди ${timer} сек...`;
                 }
             }, 1000);
             
