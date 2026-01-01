@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fugu Hub | Links & Game</title>
+    <title>Links & Game</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root {
@@ -16,7 +16,7 @@
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: sans-serif;
             background-color: var(--bg);
             color: white;
             margin: 0;
@@ -26,68 +26,46 @@
             padding: 20px;
         }
 
-        .container {
-            width: 100%;
-            max-width: 400px;
-            text-align: center;
-        }
+        .container { width: 100%; max-width: 400px; text-align: center; }
 
-        .profile-img {
-            width: 100px;
-            height: 100px;
-            border-radius: 50%;
-            border: 3px solid var(--accent);
-            margin-bottom: 15px;
-            box-shadow: 0 0 15px var(--accent);
-        }
-
-        h1 { font-size: 1.5rem; margin-bottom: 20px; }
-
-        /* Кнопки ссылок */
         .link-btn {
             display: flex;
             align-items: center;
             justify-content: center;
             padding: 15px;
-            margin-bottom: 15px;
+            margin-bottom: 12px;
             border-radius: 12px;
             text-decoration: none;
             color: white;
             font-weight: bold;
-            transition: transform 0.2s, box-shadow 0.2s;
-            border: 1px solid rgba(255,255,255,0.1);
+            background: var(--card-bg);
+            border: 1px solid rgba(255,255,255,0.05);
         }
 
-        .link-btn:active { transform: scale(0.95); }
-
-        .tg-friend { background: var(--tg-color); }
-        .tg-my { background: #24292e; border-left: 5px solid var(--tg-color); }
-        .yt { background: var(--yt-color); }
-        .tt { background: #000; border: 1px solid var(--tt-color); }
-
         .link-btn i { margin-right: 10px; font-size: 1.2rem; }
+        .tg i { color: var(--tg-color); }
+        .yt i { color: var(--yt-color); }
+        .tt i { color: var(--tt-color); }
 
-        /* Блок игры */
         .game-section {
             margin-top: 30px;
             background: var(--card-bg);
             padding: 20px;
             border-radius: 20px;
-            border: 1px solid var(--accent);
+            border: 1px solid #333;
         }
 
-        .balance { font-size: 1.2rem; margin-bottom: 15px; color: var(--accent); }
+        .balance span { color: var(--accent); font-weight: bold; }
 
         .clicker-btn {
             background: var(--accent);
             color: black;
             border: none;
-            padding: 15px 30px;
+            padding: 12px 30px;
             border-radius: 50px;
             font-weight: bold;
-            font-size: 1rem;
+            margin: 15px 0;
             cursor: pointer;
-            margin-bottom: 20px;
         }
 
         .slots {
@@ -110,82 +88,79 @@
             cursor: pointer;
         }
 
-        .bet-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .memes-section { margin-top: 40px; width: 100%; }
+        .memes-section h3 { color: #555; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 1px; }
+        .meme-img { width: 100%; border-radius: 10px; margin-bottom: 15px; border: 1px solid #222; }
     </style>
 </head>
 <body>
 
     <div class="container">
-        <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Fugu" alt="Logo" class="profile-img">
-        <h1>Fugu Hub</h1>
-
-        <a href="https://t.me/cherebuhh_tv" class="link-btn tg-friend" target="_blank">
-            <i class="fab fa-telegram"></i> Канал Кореша
+        
+        <a href="https://t.me/cherebuhh_tv" class="link-btn tg" target="_blank">
+            <i class="fab fa-telegram"></i> Cherebuhh
         </a>
 
-        <a href="https://t.me/Logovo_bomja_fugu" class="link-btn tg-my" target="_blank">
-            <i class="fab fa-telegram"></i> Моё Логово (Новости)
+        <a href="https://t.me/Logovo_bomja_fugu" class="link-btn tg" target="_blank">
+            <i class="fab fa-telegram"></i> Моё Логово
         </a>
 
         <a href="https://www.youtube.com/@Bezk0nechnyy_N0s0k" class="link-btn yt" target="_blank">
-            <i class="fab fa-youtube"></i> Мой YouTube
+            <i class="fab fa-youtube"></i> YouTube
         </a>
 
         <a href="https://www.tiktok.com/@perkysrak_fugu?_r=1&_t=ZM-92hyjuMM54F" class="link-btn tt" target="_blank">
-            <i class="fab fa-tiktok"></i> Мой TikTok
+            <i class="fab fa-tiktok"></i> TikTok
         </a>
 
         <div class="game-section">
-            <h3>🎰 Fugu Casino & Clicker</h3>
-            <div class="balance">Монеты: <span id="coins">0</span></div>
-            
-            <button class="clicker-btn" onclick="addCoin()">КЛИКАТЬ!</button>
-            
-            <div class="slots" id="slot-display">❓ ❓ ❓</div>
-            <button class="bet-btn" onclick="playSlots()" id="bet-btn">Депнуть 10 монет</button>
-            <p id="game-status" style="font-size: 0.8rem; margin-top: 10px; color: #aaa;">Собери 3 одинаковых!</p>
+            <div class="balance">Баланс: <span id="coins">0</span> 💰</div>
+            <button class="clicker-btn" onclick="addCoin()">ТАПАТЬ</button>
+            <div class="slots" id="slot-display">🎰 🎰 🎰</div>
+            <button class="bet-btn" onclick="playSlots()" id="bet-btn">Депнуть 10</button>
         </div>
+
+        <div class="memes-section">
+            <h3>Локальные мемы</h3>
+            <img src="1000017082.jpg" class="meme-img">
+            <img src="1000017081.jpg" class="meme-img">
+            <img src="1000015956.jpg" class="meme-img">
+            <img src="1000016148.png" class="meme-img">
+            <img src="1000016869.jpg" class="meme-img">
+            <img src="1000016779.jpg" class="meme-img">
+            <img src="1000017084.jpg" class="meme-img">
+        </div>
+
     </div>
 
     <script>
-        let coins = 0;
+        let coins = localStorage.getItem('fugu_coins') ? parseInt(localStorage.getItem('fugu_coins')) : 0;
         const symbols = ['🍎', '💎', '🍋', '7️⃣', '🍒'];
-
-        function addCoin() {
-            coins++;
-            updateDisplay();
-        }
-
-        function playSlots() {
-            if (coins < 10) {
-                alert("Мало монет! Кликай еще.");
-                return;
-            }
-
-            coins -= 10;
-            const s1 = symbols[Math.floor(Math.random() * symbols.length)];
-            const s2 = symbols[Math.floor(Math.random() * symbols.length)];
-            const s3 = symbols[Math.floor(Math.random() * symbols.length)];
-
-            document.getElementById('slot-display').innerText = `${s1} ${s2} ${s3}`;
-
-            if (s1 === s2 && s2 === s3) {
-                let win = 100;
-                if (s1 === '7️⃣') win = 500;
-                coins += win;
-                document.getElementById('game-status').innerText = `ДЖЕКПОТ! +${win} монет!`;
-                document.getElementById('game-status').style.color = "#00ff00";
-            } else {
-                document.getElementById('game-status').innerText = "Не повезло, попробуй еще!";
-                document.getElementById('game-status').style.color = "#ff4444";
-            }
-            updateDisplay();
-        }
 
         function updateDisplay() {
             document.getElementById('coins').innerText = coins;
             document.getElementById('bet-btn').disabled = coins < 10;
         }
+
+        function addCoin() {
+            coins++;
+            save();
+            updateDisplay();
+        }
+
+        function playSlots() {
+            if (coins < 10) return;
+            coins -= 10;
+            const s = () => symbols[Math.floor(Math.random() * symbols.length)];
+            const r1 = s(), r2 = s(), r3 = s();
+            document.getElementById('slot-display').innerText = `${r1} ${r2} ${r3}`;
+            if (r1 === r2 && r2 === r3) coins += 100;
+            save();
+            updateDisplay();
+        }
+
+        function save() { localStorage.setItem('fugu_coins', coins); }
+        updateDisplay();
     </script>
 </body>
 </html>
