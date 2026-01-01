@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fugu Hub | Links & Game</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --bg: #0f0f0f;
+            --card-bg: #1a1a1a;
+            --accent: #00f2ff;
+            --tg-color: #0088cc;
+            --yt-color: #ff0000;
+            --tt-color: #ff0050;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg);
+            color: white;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        .profile-img {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            border: 3px solid var(--accent);
+            margin-bottom: 15px;
+            box-shadow: 0 0 15px var(--accent);
+        }
+
+        h1 { font-size: 1.5rem; margin-bottom: 20px; }
+
+        /* Кнопки ссылок */
+        .link-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 12px;
+            text-decoration: none;
+            color: white;
+            font-weight: bold;
+            transition: transform 0.2s, box-shadow 0.2s;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .link-btn:active { transform: scale(0.95); }
+
+        .tg-friend { background: var(--tg-color); }
+        .tg-my { background: #24292e; border-left: 5px solid var(--tg-color); }
+        .yt { background: var(--yt-color); }
+        .tt { background: #000; border: 1px solid var(--tt-color); }
+
+        .link-btn i { margin-right: 10px; font-size: 1.2rem; }
+
+        /* Блок игры */
+        .game-section {
+            margin-top: 30px;
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: 20px;
+            border: 1px solid var(--accent);
+        }
+
+        .balance { font-size: 1.2rem; margin-bottom: 15px; color: var(--accent); }
+
+        .clicker-btn {
+            background: var(--accent);
+            color: black;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 50px;
+            font-weight: bold;
+            font-size: 1rem;
+            cursor: pointer;
+            margin-bottom: 20px;
+        }
+
+        .slots {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            font-size: 2rem;
+            margin: 15px 0;
+            background: #000;
+            padding: 10px;
+            border-radius: 10px;
+        }
+
+        .bet-btn {
+            background: #ff9900;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        .bet-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Fugu" alt="Logo" class="profile-img">
+        <h1>Fugu Hub</h1>
+
+        <a href="https://t.me/cherebuhh_tv" class="link-btn tg-friend" target="_blank">
+            <i class="fab fa-telegram"></i> Канал Кореша
+        </a>
+
+        <a href="https://t.me/Logovo_bomja_fugu" class="link-btn tg-my" target="_blank">
+            <i class="fab fa-telegram"></i> Моё Логово (Новости)
+        </a>
+
+        <a href="https://www.youtube.com/@Bezk0nechnyy_N0s0k" class="link-btn yt" target="_blank">
+            <i class="fab fa-youtube"></i> Мой YouTube
+        </a>
+
+        <a href="https://www.tiktok.com/@perkysrak_fugu?_r=1&_t=ZM-92hyjuMM54F" class="link-btn tt" target="_blank">
+            <i class="fab fa-tiktok"></i> Мой TikTok
+        </a>
+
+        <div class="game-section">
+            <h3>🎰 Fugu Casino & Clicker</h3>
+            <div class="balance">Монеты: <span id="coins">0</span></div>
+            
+            <button class="clicker-btn" onclick="addCoin()">КЛИКАТЬ!</button>
+            
+            <div class="slots" id="slot-display">❓ ❓ ❓</div>
+            <button class="bet-btn" onclick="playSlots()" id="bet-btn">Депнуть 10 монет</button>
+            <p id="game-status" style="font-size: 0.8rem; margin-top: 10px; color: #aaa;">Собери 3 одинаковых!</p>
+        </div>
+    </div>
+
+    <script>
+        let coins = 0;
+        const symbols = ['🍎', '💎', '🍋', '7️⃣', '🍒'];
+
+        function addCoin() {
+            coins++;
+            updateDisplay();
+        }
+
+        function playSlots() {
+            if (coins < 10) {
+                alert("Мало монет! Кликай еще.");
+                return;
+            }
+
+            coins -= 10;
+            const s1 = symbols[Math.floor(Math.random() * symbols.length)];
+            const s2 = symbols[Math.floor(Math.random() * symbols.length)];
+            const s3 = symbols[Math.floor(Math.random() * symbols.length)];
+
+            document.getElementById('slot-display').innerText = `${s1} ${s2} ${s3}`;
+
+            if (s1 === s2 && s2 === s3) {
+                let win = 100;
+                if (s1 === '7️⃣') win = 500;
+                coins += win;
+                document.getElementById('game-status').innerText = `ДЖЕКПОТ! +${win} монет!`;
+                document.getElementById('game-status').style.color = "#00ff00";
+            } else {
+                document.getElementById('game-status').innerText = "Не повезло, попробуй еще!";
+                document.getElementById('game-status').style.color = "#ff4444";
+            }
+            updateDisplay();
+        }
+
+        function updateDisplay() {
+            document.getElementById('coins').innerText = coins;
+            document.getElementById('bet-btn').disabled = coins < 10;
+        }
+    </script>
+</body>
+</html>
