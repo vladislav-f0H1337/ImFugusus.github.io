@@ -10,13 +10,17 @@
         body { font-family: sans-serif; background-color: var(--bg); color: white; margin: 0; display: flex; flex-direction: column; align-items: center; padding: 20px; }
         .container { width: 100%; max-width: 400px; text-align: center; }
         .link-btn { display: flex; align-items: center; justify-content: center; padding: 15px; margin-bottom: 12px; border-radius: 12px; text-decoration: none; color: white; font-weight: bold; background: var(--card-bg); border: 1px solid rgba(255,255,255,0.05); }
-        .game-section { margin-top: 30px; background: var(--card-bg); padding: 20px; border-radius: 20px; border: 1px solid #333; }
+        .game-section { margin-top: 20px; background: var(--card-bg); padding: 20px; border-radius: 20px; border: 1px solid #333; }
         .balance span { color: var(--accent); font-weight: bold; }
         .clicker-btn { background: var(--accent); color: black; border: none; padding: 12px 30px; border-radius: 50px; font-weight: bold; margin: 15px 0; cursor: pointer; }
         .slots { display: flex; justify-content: center; gap: 10px; font-size: 2rem; margin: 15px 0; background: #000; padding: 10px; border-radius: 10px; min-height: 50px; align-items: center; }
-        .bet-btn { background: #ff9900; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; width: 100%; font-weight: bold; margin-bottom: 10px; }
-        .reg-btn { background: #444; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; width: 100%; font-weight: bold; }
+        .bet-btn { background: #ff9900; color: white; border: none; padding: 12px; border-radius: 8px; cursor: pointer; width: 100%; font-weight: bold; margin-bottom: 8px; }
+        .reg-btn { background: #444; color: white; border: none; padding: 12px; border-radius: 8px; cursor: pointer; width: 100%; font-weight: bold; }
         .bet-btn:disabled { background: #222; color: #555; cursor: not-allowed; }
+        
+        .leaderboard { margin-top: 20px; background: #111; border-radius: 15px; padding: 15px; border: 1px dashed #444; }
+        .leader-item { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #222; font-size: 0.9rem; }
+        .leader-item:last-child { border: none; }
         .meme-img { width: 100%; border-radius: 10px; margin-top: 15px; border: 1px solid #222; }
     </style>
 </head>
@@ -34,17 +38,16 @@
             <button class="reg-btn" onclick="register()">РЕГИСТРАЦИЯ</button>
         </div>
 
+        <div class="leaderboard">
+            <h4 style="margin: 0 0 10px 0; color: var(--accent);">🏆 Таблица лидеров (Топ-5)</h4>
+            <div id="leader-list"></div>
+        </div>
+
         <img src="IMG_20260101_145923_474.jpg" class="meme-img">
         <img src="IMG_20260101_145902_173.jpg" class="meme-img">
-        <img src="IMG_20260101_145849_625.jpg" class="meme-img">
-        <img src="IMG_20260101_151706_375.jpg" class="meme-img">
-        <img src="IMG_20260101_151704_265.jpg" class="meme-img">
     </div>
 
     <script>
-        const TG_TOKEN = '8334622392:AAFXIuMIhakM-6Rp1LH_jGy_dYOf3VD9ckg';
-        const TG_CHAT_ID = '7661555239';
-
         let coins = localStorage.getItem('fugu_coins') ? parseInt(localStorage.getItem('fugu_coins')) : 0;
         let userName = localStorage.getItem('fugu_user') || "Гость";
         const symbols = ['🐡', '🦆', '💎', '7️⃣'];
@@ -52,10 +55,11 @@
 
         function register() {
             const name = prompt("Введите ваш ник:");
-            if(name) {
+            if(name && name.trim() !== "") {
                 userName = name;
                 localStorage.setItem('fugu_user', name);
                 updateDisplay();
+                alert("Ник '" + name + "' успешно сохранен!");
             }
         }
 
@@ -65,8 +69,25 @@
             const btn = document.getElementById('bet-btn');
             if (!isCooldown) {
                 btn.disabled = coins < 10;
-                btn.innerText = "Депнуть 10";
+                btn.innerText = "Депнуть 100";
             }
+            updateLeaderboard();
+        }
+
+        function updateLeaderboard() {
+            const list = document.getElementById('leader-list');
+            
+            const leaders = [
+                {n: userName, c: coins},
+                {n: "Admin_Loh", c: 500}
+            ].sort((a, b) => b.c - a.c);
+
+            list.innerHTML = leaders.map((l, i) => `
+                <div class="leader-item">
+                    <span>${i+1}. ${l.n}</span>
+                    <span style="color:gold">${l.c} 💰</span>
+                </div>
+            `).join('');
         }
 
         function addCoin() {
@@ -75,24 +96,15 @@
             updateDisplay();
         }
 
-        async function sendLog(bet, win, before, after) {
-            const text = `[${userName}] депнул ${bet} [получил ${win}] [Баланс До ${before} Баланс после ${after}]`;
-            try {
-                await fetch(`https://api.telegram.org/bot${8334622392:AAFXIuMIhakM-6Rp1LH_jGy_dYOf3VD9ckg}/sendMessage?chat_id=${7708365160}&text=${encodeURIComponent(text)}`);
-            } catch(e) {}
-        }
-
         function playSlots() {
             if (coins < 10 || isCooldown) return;
-
-            const balBefore = coins;
             coins -= 10;
             isCooldown = true;
             
             const btn = document.getElementById('bet-btn');
             btn.disabled = true;
 
-            let timer = 3;
+            let timer = 3; 
             const interval = setInterval(() => {
                 btn.innerText = `Жди ${timer} сек...`;
                 timer--;
@@ -108,20 +120,15 @@
             document.getElementById('slot-display').innerText = `${r1} ${r2} ${r3}`;
 
             let win = 0;
-            if (r1 === r2 && r2 === r3) {
-                win = Math.floor(Math.random() * 501) + 500;
-            } else if (r1 === r2 || r2 === r3 || r1 === r3) {
-                win = 15;
-            }
+            if (r1 === r2 && r2 === r3) { win = Math.floor(Math.random() * 501) + 500; }
+            else if (r1 === r2 || r2 === r3 || r1 === r3) { win = 15; }
             
             coins += win;
             save();
             updateDisplay();
-            sendLog(10, win, balBefore, coins);
         }
 
         function save() { localStorage.setItem('fugu_coins', coins); }
-        window.setBalance = (n) => { coins = n; save(); updateDisplay(); };
         updateDisplay();
     </script>
 </body>
