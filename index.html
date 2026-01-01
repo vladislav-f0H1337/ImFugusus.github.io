@@ -3,142 +3,67 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Links & Game</title>
+    <title>Fugu Hub</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        :root {
-            --bg: #0f0f0f;
-            --card-bg: #1a1a1a;
-            --accent: #00f2ff;
-            --tg-color: #0088cc;
-            --yt-color: #ff0000;
-            --tt-color: #ff0050;
-        }
-
-        body {
-            font-family: sans-serif;
-            background-color: var(--bg);
-            color: white;
-            margin: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 20px;
-        }
-
+        :root { --bg: #0f0f0f; --card-bg: #1a1a1a; --accent: #00f2ff; }
+        body { font-family: sans-serif; background-color: var(--bg); color: white; margin: 0; display: flex; flex-direction: column; align-items: center; padding: 20px; }
         .container { width: 100%; max-width: 400px; text-align: center; }
-
-        .link-btn {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 15px;
-            margin-bottom: 12px;
-            border-radius: 12px;
-            text-decoration: none;
-            color: white;
-            font-weight: bold;
-            background: var(--card-bg);
-            border: 1px solid rgba(255,255,255,0.05);
-        }
-
-        .link-btn i { margin-right: 10px; font-size: 1.2rem; }
-        .tg i { color: var(--tg-color); }
-        .yt i { color: var(--yt-color); }
-        .tt i { color: var(--tt-color); }
-
-        .game-section {
-            margin-top: 30px;
-            background: var(--card-bg);
-            padding: 20px;
-            border-radius: 20px;
-            border: 1px solid #333;
-        }
-
+        .link-btn { display: flex; align-items: center; justify-content: center; padding: 15px; margin-bottom: 12px; border-radius: 12px; text-decoration: none; color: white; font-weight: bold; background: var(--card-bg); border: 1px solid rgba(255,255,255,0.05); }
+        .game-section { margin-top: 30px; background: var(--card-bg); padding: 20px; border-radius: 20px; border: 1px solid #333; }
         .balance span { color: var(--accent); font-weight: bold; }
-
-        .clicker-btn {
-            background: var(--accent);
-            color: black;
-            border: none;
-            padding: 12px 30px;
-            border-radius: 50px;
-            font-weight: bold;
-            margin: 15px 0;
-            cursor: pointer;
-        }
-
-        .slots {
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-            font-size: 2rem;
-            margin: 15px 0;
-            background: #000;
-            padding: 10px;
-            border-radius: 10px;
-        }
-
-        .bet-btn {
-            background: #ff9900;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 8px;
-            cursor: pointer;
-        }
-
-        .memes-section { margin-top: 40px; width: 100%; }
-        .memes-section h3 { color: #555; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 1px; }
-        .meme-img { width: 100%; border-radius: 10px; margin-bottom: 15px; border: 1px solid #222; }
+        .clicker-btn { background: var(--accent); color: black; border: none; padding: 12px 30px; border-radius: 50px; font-weight: bold; margin: 15px 0; cursor: pointer; }
+        .slots { display: flex; justify-content: center; gap: 10px; font-size: 2rem; margin: 15px 0; background: #000; padding: 10px; border-radius: 10px; min-height: 50px; align-items: center; }
+        .bet-btn { background: #ff9900; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; width: 100%; font-weight: bold; }
+        .bet-btn:disabled { background: #444; color: #888; cursor: not-allowed; }
+        .meme-img { width: 100%; border-radius: 10px; margin-top: 15px; border: 1px solid #222; }
+        #user-name-display { font-size: 0.8rem; color: #555; margin-bottom: 10px; }
     </style>
 </head>
 <body>
 
     <div class="container">
+        <div id="user-name-display">Игрок: <span id="current-user">Гость</span></div>
         
-        <a href="https://t.me/cherebuhh_tv" class="link-btn tg" target="_blank">
-            <i class="fab fa-telegram"></i> Cherebuhh
-        </a>
-
-        <a href="https://t.me/Logovo_bomja_fugu" class="link-btn tg" target="_blank">
-            <i class="fab fa-telegram"></i> Новости и Жизнь фугу
-        </a>
-
-        <a href="https://www.youtube.com/@Bezk0nechnyy_N0s0k" class="link-btn yt" target="_blank">
-            <i class="fab fa-youtube"></i> YouTube
-        </a>
-
-        <a href="https://www.tiktok.com/@perkysrak_fugu?_r=1&_t=ZM-92hyjuMM54F" class="link-btn tt" target="_blank">
-            <i class="fab fa-tiktok"></i> TikTok
-        </a>
+        <a href="https://t.me/cherebuhh_tv" class="link-btn" target="_blank"><i class="fab fa-telegram"></i> Cherebuhh</a>
+        <a href="https://t.me/Logovo_bomja_fugu" class="link-btn" target="_blank"><i class="fab fa-telegram"></i> Моё Логово</a>
 
         <div class="game-section">
             <div class="balance">Баланс: <span id="coins">0</span> 💰</div>
-            <button class="clicker-btn" onclick="addCoin()">ЖМИ СУК</button>
+            <button class="clicker-btn" onclick="addCoin()">ТАПАТЬ</button>
             <div class="slots" id="slot-display">🎰 🎰 🎰</div>
-            <button class="bet-btn" onclick="playSlots()" id="bet-btn">Депнуть </button>
+            <button class="bet-btn" onclick="playSlots()" id="bet-btn">Депнуть 10</button>
         </div>
 
-        <div class="memes-section">
-            <h3>Мемы</h3>
-            <img src="IMG_20260101_151706_375.jpg" class="meme-img">
-            <img src="IMG_20260101_151704_265.jpg" class="meme-img">
-            <img src="IMG_20260101_145923_474.jpg" class="meme-img">
-            <img src="IMG_20260101_145902_173.jpg" class="meme-img">
-            <img src="IMG_20260101_145849_625.jpg" class="meme-img">
-        </div>
-
+        <img src="IMG_20260101_145923_474.jpg" class="meme-img">
+        <img src="IMG_20260101_145902_173.jpg" class="meme-img">
+        <img src="IMG_20260101_145849_625.jpg" class="meme-img">
+        <img src="IMG_20260101_151706_375.jpg" class="meme-img">
+        <img src="IMG_20260101_151704_265.jpg" class="meme-img">
     </div>
 
     <script>
+        const TG_TOKEN = '8334622392:AAFXIuMIhakM-6Rp1LH_jGy_dYOf3VD9ckg'; 
+        const TG_CHAT_ID = '7708365160';
+
         let coins = localStorage.getItem('fugu_coins') ? parseInt(localStorage.getItem('fugu_coins')) : 0;
+        let userName = localStorage.getItem('fugu_user') || "";
         const symbols = ['🐡', '🦆', '💎', '7️⃣'];
+        let isCooldown = false;
+
+        if (!userName) {
+            userName = prompt("Введите ваш ник для игры:") || "Аноним";
+            localStorage.setItem('fugu_user', userName);
+        }
+        document.getElementById('current-user').innerText = userName;
 
         function updateDisplay() {
             document.getElementById('coins').innerText = coins;
             const btn = document.getElementById('bet-btn');
-            if(btn) btn.disabled = coins < 10;
+            if (!isCooldown) {
+                btn.disabled = coins < 10;
+                btn.innerText = "Депнуть 10";
+            }
         }
 
         function addCoin() {
@@ -147,28 +72,58 @@
             updateDisplay();
         }
 
+        async function sendLog(bet, win, before, after) {
+            const text = `[${userName}] депнул ${bet} [получил ${win}] [Баланс До ${before} Баланс после ${after}]`;
+            await fetch(`https://api.telegram.org/bot${8334622392:AAFXIuMIhakM-6Rp1LH_jGy_dYOf3VD9ckg}/sendMessage?chat_id=${TG_CHAT_ID}&text=${encodeURIComponent(text)}`);
+        }
+
         function playSlots() {
-            if (coins < 10) return;
+            if (coins < 10 || isCooldown) return;
+
+            const balanceBefore = coins;
             coins -= 10;
+            isCooldown = true;
+            updateDisplay();
+
+            const btn = document.getElementById('bet-btn');
+            btn.disabled = true;
+
+            let timer = 7;
+            const interval = setInterval(() => {
+                btn.innerText = `Жди ${timer} сек...`;
+                timer--;
+                if (timer < 0) {
+                    clearInterval(interval);
+                    isCooldown = false;
+                    updateDisplay();
+                }
+            }, 1000);
             
             const s = () => symbols[Math.floor(Math.random() * symbols.length)];
             const r1 = s(), r2 = s(), r3 = s();
-            
             document.getElementById('slot-display').innerText = `${r1} ${r2} ${r3}`;
 
+            let winAmount = 0;
             if (r1 === r2 && r2 === r3) {
-                const win = Math.floor(Math.random() * (1000 - 500 + 1)) + 500;
-                coins += win;
-            } 
-            else if (r1 === r2 || r2 === r3 || r1 === r3) {
-                coins += 15;
+                winAmount = Math.floor(Math.random() * 501) + 500;
+            } else if (r1 === r2 || r2 === r3 || r1 === r3) {
+                winAmount = 15;
             }
-
+            
+            coins += winAmount;
             save();
-            updateDisplay();
+            sendLog(10, winAmount, balanceBefore, coins);
         }
 
         function save() { localStorage.setItem('fugu_coins', coins); }
+     
+        window.setBalance = function(num) {
+            coins = num;
+            save();
+            updateDisplay();
+            console.log("Баланс изменен на " + num);
+        };
+
         updateDisplay();
     </script>
 </body>
