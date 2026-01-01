@@ -4,64 +4,49 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Fugu Hub</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root { --bg: #0f0f0f; --card-bg: #1a1a1a; --accent: #00f2ff; }
         body { font-family: sans-serif; background-color: var(--bg); color: white; margin: 0; display: flex; flex-direction: column; align-items: center; padding: 20px; }
         .container { width: 100%; max-width: 400px; text-align: center; }
-        .link-btn { display: flex; align-items: center; justify-content: center; padding: 15px; margin-bottom: 12px; border-radius: 12px; text-decoration: none; color: white; font-weight: bold; background: var(--card-bg); border: 1px solid rgba(255,255,255,0.05); }
-        .game-section { margin-top: 20px; background: var(--card-bg); padding: 20px; border-radius: 20px; border: 1px solid #333; }
+        .game-section { background: var(--card-bg); padding: 20px; border-radius: 20px; border: 1px solid #333; margin-top: 20px; }
+        .balance { font-size: 1.2rem; margin-bottom: 10px; }
         .balance span { color: var(--accent); font-weight: bold; }
-        .clicker-btn { background: var(--accent); color: black; border: none; padding: 12px 30px; border-radius: 50px; font-weight: bold; margin: 15px 0; cursor: pointer; }
-        .slots { display: flex; justify-content: center; gap: 10px; font-size: 2rem; margin: 15px 0; background: #000; padding: 10px; border-radius: 10px; min-height: 50px; align-items: center; }
-        .bet-btn { background: #ff9900; color: white; border: none; padding: 12px; border-radius: 8px; cursor: pointer; width: 100%; font-weight: bold; margin-bottom: 8px; }
-        .reg-btn { background: #444; color: white; border: none; padding: 12px; border-radius: 8px; cursor: pointer; width: 100%; font-weight: bold; }
+        .clicker-btn { background: var(--accent); color: black; border: none; padding: 15px 30px; border-radius: 50px; font-weight: bold; cursor: pointer; width: 100%; margin-bottom: 20px; }
+        .slots { display: flex; justify-content: center; gap: 10px; font-size: 2.5rem; margin: 15px 0; background: #000; padding: 15px; border-radius: 15px; border: 2px solid #222; }
+        .bet-btn { background: #ff9900; color: white; border: none; padding: 15px; border-radius: 12px; cursor: pointer; width: 100%; font-weight: bold; }
         .bet-btn:disabled { background: #222; color: #555; cursor: not-allowed; }
-        
-        .leaderboard { margin-top: 20px; background: #111; border-radius: 15px; padding: 15px; border: 1px dashed #444; }
-        .leader-item { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #222; font-size: 0.9rem; }
-        .leader-item:last-child { border: none; }
-        .meme-img { width: 100%; border-radius: 10px; margin-top: 15px; border: 1px solid #222; }
+        .leaderboard { margin-top: 25px; background: #111; border-radius: 15px; padding: 15px; border: 1px solid #333; }
+        .leader-item { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #222; }
     </style>
 </head>
 <body>
+
     <div class="container">
-        <div style="margin-bottom:10px; color:#888;">Игрок: <span id="user-display" style="color:white">Гость</span></div>
-        <a href="https://t.me/cherebuhh_tv" class="link-btn" target="_blank">Канал Кореша</a>
-        <a href="https://t.me/Logovo_bomja_fugu" class="link-btn" target="_blank">Моё Логово</a>
+        <div style="margin-bottom:15px;">Игрок: <b id="user-display">Загрузка...</b></div>
 
         <div class="game-section">
             <div class="balance">Баланс: <span id="coins">0</span> 💰</div>
             <button class="clicker-btn" onclick="addCoin()">ТАПАТЬ</button>
             <div class="slots" id="slot-display">🎰 🎰 🎰</div>
             <button class="bet-btn" onclick="playSlots()" id="bet-btn">Депнуть 10</button>
-            <button class="reg-btn" onclick="register()">РЕГИСТРАЦИЯ</button>
         </div>
 
         <div class="leaderboard">
-            <h4 style="margin: 0 0 10px 0; color: var(--accent);">🏆 Таблица лидеров (Топ-5)</h4>
+            <h3 style="margin:0 0 10px 0; color:var(--accent);">🏆 Топ игроков</h3>
             <div id="leader-list"></div>
         </div>
-
-        <img src="IMG_20260101_145923_474.jpg" class="meme-img">
-        <img src="IMG_20260101_145902_173.jpg" class="meme-img">
     </div>
 
     <script>
-        let coins = localStorage.getItem('fugu_coins') ? parseInt(localStorage.getItem('fugu_coins')) : 0;
-        let userName = localStorage.getItem('fugu_user') || "Гость";
-        const symbols = ['🐡', '🦆', '💎', '7️⃣'];
-        let isCooldown = false;
-
-        function register() {
-            const name = prompt("Введите ваш ник:");
-            if(name && name.trim() !== "") {
-                userName = name;
-                localStorage.setItem('fugu_user', name);
-                updateDisplay();
-                alert("Ник '" + name + "' успешно сохранен!");
-            }
+        // Загрузка или создание анонимного ника
+        let userName = localStorage.getItem('fugu_user');
+        if (!userName) {
+            userName = "User " + Math.floor(Math.random() * 1000);
+            localStorage.setItem('fugu_user', userName);
         }
+
+        let coins = localStorage.getItem('fugu_coins') ? parseInt(localStorage.getItem('fugu_coins')) : 0;
+        let isCooldown = false;
 
         function updateDisplay() {
             document.getElementById('coins').innerText = coins;
@@ -69,20 +54,21 @@
             const btn = document.getElementById('bet-btn');
             if (!isCooldown) {
                 btn.disabled = coins < 10;
-                btn.innerText = "Депнуть 100";
+                btn.innerText = "Депнуть 10";
             }
             updateLeaderboard();
         }
 
         function updateLeaderboard() {
-            const list = document.getElementById('leader-list');
-            
             const leaders = [
+                {n: "Fugu_King", c: 50000},
+                {n: "SlotMaster", c: 25000},
                 {n: userName, c: coins},
-                {n: "Admin_Loh", c: 500}
+                {n: "User 123", c: 800},
+                {n: "User 999", c: 300}
             ].sort((a, b) => b.c - a.c);
 
-            list.innerHTML = leaders.map((l, i) => `
+            document.getElementById('leader-list').innerHTML = leaders.map((l, i) => `
                 <div class="leader-item">
                     <span>${i+1}. ${l.n}</span>
                     <span style="color:gold">${l.c} 💰</span>
@@ -90,11 +76,7 @@
             `).join('');
         }
 
-        function addCoin() {
-            coins++;
-            save();
-            updateDisplay();
-        }
+        function addCoin() { coins++; save(); updateDisplay(); }
 
         function playSlots() {
             if (coins < 10 || isCooldown) return;
@@ -102,10 +84,10 @@
             isCooldown = true;
             
             const btn = document.getElementById('bet-btn');
-            btn.disabled = true;
-
             let timer = 3; 
+            
             const interval = setInterval(() => {
+                btn.disabled = true;
                 btn.innerText = `Жди ${timer} сек...`;
                 timer--;
                 if (timer < 0) {
@@ -114,16 +96,15 @@
                     updateDisplay();
                 }
             }, 1000);
-            
+
+            const symbols = ['🐡', '🦆', '💎', '7️⃣'];
             const s = () => symbols[Math.floor(Math.random() * symbols.length)];
             const r1 = s(), r2 = s(), r3 = s();
             document.getElementById('slot-display').innerText = `${r1} ${r2} ${r3}`;
 
-            let win = 0;
-            if (r1 === r2 && r2 === r3) { win = Math.floor(Math.random() * 501) + 500; }
-            else if (r1 === r2 || r2 === r3 || r1 === r3) { win = 15; }
-            
-            coins += win;
+            if (r1 === r2 && r2 === r3) { coins += 1000; } 
+            else if (r1 === r2 || r2 === r3 || r1 === r3) { coins += 15; }
+
             save();
             updateDisplay();
         }
