@@ -102,7 +102,7 @@
         </a>
 
         <a href="https://t.me/Logovo_bomja_fugu" class="link-btn tg" target="_blank">
-            <i class="fab fa-telegram"></i> Моё Логово
+            <i class="fab fa-telegram"></i> Новости и Жизнь фугу
         </a>
 
         <a href="https://www.youtube.com/@Bezk0nechnyy_N0s0k" class="link-btn yt" target="_blank">
@@ -115,9 +115,9 @@
 
         <div class="game-section">
             <div class="balance">Баланс: <span id="coins">0</span> 💰</div>
-            <button class="clicker-btn" onclick="addCoin()">ТАПАТЬ</button>
+            <button class="clicker-btn" onclick="addCoin()">ЖМИ СУК</button>
             <div class="slots" id="slot-display">🎰 🎰 🎰</div>
-            <button class="bet-btn" onclick="playSlots()" id="bet-btn">Депнуть 10</button>
+            <button class="bet-btn" onclick="playSlots()" id="bet-btn">Депнуть </button>
         </div>
 
         <div class="memes-section">
@@ -133,11 +133,11 @@
 
     <script>
         let coins = localStorage.getItem('fugu_coins') ? parseInt(localStorage.getItem('fugu_coins')) : 0;
-        const symbols = ['🍎', '💎', '🍋', '7️⃣', '🍒'];
+        const symbols = ['🦆', '💎', '🍋', '7️⃣', '🐡'];
 
         function updateDisplay() {
             document.getElementById('coins').innerText = coins;
-            document.getElementById('bet-btn').disabled = coins < 10;
+            document.getElementById('bet-btn').disabled = coins < 5;
         }
 
         function addCoin() {
@@ -152,7 +152,7 @@
             const s = () => symbols[Math.floor(Math.random() * symbols.length)];
             const r1 = s(), r2 = s(), r3 = s();
             document.getElementById('slot-display').innerText = `${r1} ${r2} ${r3}`;
-            if (r1 === r2 && r2 === r3) coins += 100;
+            if (r1 === r2 && r2 === r3) coins += 1000;
             save();
             updateDisplay();
         }
