@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Fugu Bread Edition</title>
+    <title>Fugu Bread & Shop</title>
     <style>
         :root { --gold: #ffcc00; --blue: #0088cc; --bg: #0a0a0a; --card: #161616; --neon: #00ffcc; --red: #ff4444; }
         body { background: var(--bg); color: white; font-family: sans-serif; margin: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; overflow-y: auto; overflow-x: hidden; }
@@ -15,33 +15,18 @@
         .main-coin:active { transform: scale(0.9); }
 
         .game-card { background: var(--card); border-radius: 20px; border: 1px solid #333; width: 92%; max-width: 400px; padding: 15px; margin-bottom: 20px; text-align: center; box-sizing: border-box; }
-        .btn { background: var(--blue); color: white; border: none; padding: 14px; border-radius: 12px; width: 100%; font-weight: bold; cursor: pointer; font-size: 16px; }
+        .btn { background: var(--blue); color: white; border: none; padding: 14px; border-radius: 12px; width: 100%; font-weight: bold; cursor: pointer; font-size: 16px; margin-top: 5px; }
+        .btn:disabled { background: #333; opacity: 0.5; }
 
-        .slot-display { background: #000; padding: 15px; border-radius: 12px; font-size: 32px; border: 2px solid var(--blue); margin: 10px 0; display: flex; justify-content: center; gap: 10px; }
+        /* МАГАЗИН */
+        .shop-item { background: #000; border: 1px solid #444; padding: 10px; border-radius: 10px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
+        .shop-info { text-align: left; }
+        .shop-price { color: var(--gold); font-weight: bold; }
 
-        /* ИНСЕЙН ЛАБИРИНТ */
-        #maze-view { 
-            width: 320px; 
-            height: 320px; 
-            background: #000; 
-            margin: 15px auto; 
-            border: 3px solid var(--red); 
-            position: relative; 
-            overflow: hidden; 
-            display: none; 
-            touch-action: none;
-        }
+        /* ЛАБИРИНТ */
+        #maze-view { width: 320px; height: 320px; background: #000; margin: 15px auto; border: 3px solid var(--red); position: relative; overflow: hidden; display: none; touch-action: none; }
         #maze-canvas { background: #000; position: absolute; top: 0; left: 0; }
-        #player-dot { 
-            width: 14px; height: 14px; 
-            background: var(--neon); 
-            border-radius: 50%; 
-            position: absolute; 
-            z-index: 10; 
-            pointer-events: none;
-            box-shadow: 0 0 10px var(--neon);
-        }
-        .maze-info { font-size: 11px; color: var(--red); margin-bottom: 5px; font-weight: bold; }
+        #player-dot { width: 14px; height: 14px; background: var(--neon); border-radius: 50%; position: absolute; z-index: 10; pointer-events: none; }
 
         .memes { display: flex; flex-direction: column; gap: 20px; width: 100%; align-items: center; padding: 20px 0 100px 0; }
         .memes img { width: 90%; max-width: 360px; border-radius: 15px; border: 2px solid #222; }
@@ -50,31 +35,43 @@
 <body>
 
     <div class="header">
-        <div style="color: #888;">Ник: <span id="u-nick">FuguSUS</span></div>
+        <div style="color: #888;">Ник: <span id="u-nick">FuguSUS</span> | Сила клика: <span id="tap-val">10</span></div>
         <div id="balance">0</div>
     </div>
 
-    <div class="main-coin" onclick="tap()">🐡</div>
+    <div class="main-coin" onclick="tap()">膨</div>
+
+    <div class="game-card">
+        <div style="font-size:14px; font-weight:bold; margin-bottom:10px;">🛒 МАГАЗИН БУСТОВ</div>
+        <div class="shop-item">
+            <div class="shop-info">
+                <div>Мякиш (+5 к клику)</div>
+                <div class="shop-price" id="p-price-1">1000$</div>
+            </div>
+            <button class="btn" style="width:80px; padding:8px;" onclick="buyUpgrade(1)">КУПИТЬ</button>
+        </div>
+        <div class="shop-item">
+            <div class="shop-info">
+                <div>Батон (+25 к клику)</div>
+                <div class="shop-price" id="p-price-2">5000$</div>
+            </div>
+            <button class="btn" style="width:80px; padding:8px;" onclick="buyUpgrade(2)">КУПИТЬ</button>
+        </div>
+    </div>
 
     <div class="game-card">
         <div style="font-size:12px; opacity:0.7">🎰 КАЗИНО (50$)</div>
-        <div class="slot-display" id="slots"><span>💎</span><span>7</span><span>🦆</span></div>
+        <div id="slots" style="font-size:30px; margin:10px;">💎 7 🦆</div>
         <button class="btn" onclick="playSlots()">КРУТИТЬ</button>
     </div>
 
     <div class="game-card">
-        <div class="maze-info">УРОВЕНЬ: HELL (НАГРАДА: 5,000$)</div>
-        <div style="font-size: 10px; margin-bottom: 10px;">Проведи точку по пути, не касаясь стен!</div>
+        <div style="font-size:11px; color:var(--red); font-weight:bold;">УРОВЕНЬ: HELL (НАГРАДА: 5$)</div>
         <button class="btn" onclick="startMaze()">ВОЙТИ В ЛАБИРИНТ</button>
         <div id="maze-view">
             <canvas id="maze-canvas" width="600" height="600"></canvas>
             <div id="player-dot"></div>
         </div>
-    </div>
-
-    <div class="game-card">
-        <div style="font-size:12px;">🏆 ТОП 1: Павел Дуров (∞)</div>
-        <div style="font-size:12px;">🏆 ТОП 2: <span id="t-nick">FuguSUS</span> (<span id="t-bal">0</span>)</div>
     </div>
 
     <div class="memes">
@@ -87,27 +84,39 @@
 
     <script>
         let balance = parseInt(localStorage.getItem('fugu_bal')) || 0;
-        let nickname = localStorage.getItem('fugu_nick') || "FuguSUS";
-        
+        let tapPower = parseInt(localStorage.getItem('fugu_power')) || 10;
+        let price1 = 1000;
+        let price2 = 5000;
+
         function update() {
             document.getElementById('balance').innerText = Math.floor(balance);
-            document.getElementById('t-bal').innerText = Math.floor(balance);
+            document.getElementById('tap-val').innerText = tapPower;
             localStorage.setItem('fugu_bal', balance);
+            localStorage.setItem('fugu_power', tapPower);
         }
         update();
 
-        function tap() { balance += 10; update(); }
+        function tap() { balance += tapPower; update(); }
+
+        function buyUpgrade(type) {
+            if(type === 1 && balance >= price1) {
+                balance -= price1; tapPower += 5; update();
+            } else if(type === 2 && balance >= price2) {
+                balance -= price2; tapPower += 25; update();
+            } else { alert("Недостаточно денег!"); }
+        }
 
         function playSlots() {
             if(balance < 50) return;
             balance -= 50;
             let s = ['🦆', '🐡', '💎', '7', '💩'];
             let r = [s[Math.floor(Math.random()*5)], s[Math.floor(Math.random()*5)], s[Math.floor(Math.random()*5)]];
-            document.getElementById('slots').innerHTML = `<span>${r[0]}</span><span>${r[1]}</span><span>${r[2]}</span>`;
-            if(r[0]===r[1] && r[1]===r[2]) balance += 500;
+            document.getElementById('slots').innerText = r.join(' ');
+            if(r[0]===r[1] && r[1]===r[2]) balance += 1000;
             update();
         }
 
+        // MAZE LOGIC
         const canvas = document.getElementById('maze-canvas');
         const ctx = canvas.getContext('2d');
         const player = document.getElementById('player-dot');
@@ -115,66 +124,36 @@
         let isMoving = false;
 
         function drawMaze() {
-            ctx.fillStyle = "black";
-            ctx.fillRect(0,0,600,600);
-            ctx.strokeStyle = "#444";
-            ctx.lineWidth = 35; // Сделал проход чуть-чуть шире для честности
-            
+            ctx.fillStyle = "black"; ctx.fillRect(0,0,600,600);
+            ctx.strokeStyle = "#444"; ctx.lineWidth = 35;
             ctx.beginPath();
-            ctx.moveTo(30, 30);
-            ctx.lineTo(250, 30); ctx.lineTo(250, 150);
-            ctx.lineTo(50, 150); ctx.lineTo(50, 300);
-            ctx.lineTo(500, 300); ctx.lineTo(500, 50);
-            ctx.lineTo(550, 50); ctx.lineTo(550, 550);
-            ctx.lineTo(30, 550);
-            ctx.stroke();
-
-            ctx.fillStyle = "#ffcc00";
-            ctx.font = "30px Arial";
-            ctx.fillText("🎁", 20, 570);
+            ctx.moveTo(30, 30); ctx.lineTo(250, 30); ctx.lineTo(250, 150);
+            ctx.lineTo(50, 150); ctx.lineTo(50, 300); ctx.lineTo(500, 300);
+            ctx.lineTo(500, 50); ctx.lineTo(550, 50); ctx.lineTo(550, 550);
+            ctx.lineTo(30, 550); ctx.stroke();
+            ctx.fillStyle = "#ffcc00"; ctx.font = "30px Arial"; ctx.fillText("🎁", 20, 570);
         }
 
-        function startMaze() {
-            view.style.display = 'block';
-            drawMaze();
-            resetPlayer();
-        }
-
-        function resetPlayer() {
-            player.style.left = "23px";
-            player.style.top = "23px";
-            isMoving = false;
-        }
+        function startMaze() { view.style.display = 'block'; drawMaze(); resetPlayer(); }
+        function resetPlayer() { player.style.left = "23px"; player.style.top = "23px"; isMoving = false; }
 
         view.onpointerdown = (e) => { isMoving = true; checkHit(e); };
         window.onpointerup = () => { isMoving = false; };
         view.onpointermove = (e) => {
             if(!isMoving) return;
             const rect = view.getBoundingClientRect();
-            let x = e.clientX - rect.left;
-            let y = e.clientY - rect.top;
-            player.style.left = (x - 7) + "px";
-            player.style.top = (y - 7) + "px";
+            let x = e.clientX - rect.left; let y = e.clientY - rect.top;
+            player.style.left = (x - 7) + "px"; player.style.top = (y - 7) + "px";
             checkHit(e);
         };
 
         function checkHit(e) {
             const rect = view.getBoundingClientRect();
-            let x = e.clientX - rect.left;
-            let y = e.clientY - rect.top;
-            
+            let x = e.clientX - rect.left; let y = e.clientY - rect.top;
             let pixel = ctx.getImageData(x, y, 1, 1).data;
-            if(pixel[0] === 0 && pixel[1] === 0 && pixel[2] === 0) {
-                isMoving = false;
-                alert("Потрачено! Попробуй еще раз.");
-                resetPlayer();
-            }
-
-            if(x < 50 && y > 280) { // Зона финиша у подарка
-                balance += 5;
-                alert("Bread 👍 хуй тебе а не +5К");
-                view.style.display = 'none';
-                update();
+            if(pixel[0] === 0 && pixel[1] === 0 && pixel[2] === 0) { isMoving = false; resetPlayer(); }
+            if(x < 50 && y > 280) {
+                balance += 5; alert("Bread 👍"); view.style.display = 'none'; update();
             }
         }
     </script>
