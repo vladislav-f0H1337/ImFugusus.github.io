@@ -3,192 +3,259 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Minimalist Game</title>
+    <title>Fugu Clicker Save</title>
     <style>
         :root {
-            --bg-color: #0d0d0d;
-            --accent-color: #ffffff;
-            --card-bg: #1a1a1a;
-            --text-color: #e0e0e0;
+            --gold: #ffcc00;
+            --blue: #0088cc;
+            --bg: #0a0a0a;
+            --card: #161616;
         }
 
         body {
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            font-family: 'Segoe UI', sans-serif;
+            background-color: var(--bg);
+            color: white;
+            font-family: sans-serif;
             margin: 0;
             display: flex;
             flex-direction: column;
             align-items: center;
-            padding: 20px;
+            min-height: 100vh;
+            padding-bottom: 50px;
         }
 
         #disclaimer {
             position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.95);
+            inset: 0;
+            background: rgba(0,0,0,0.98);
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
             z-index: 1000;
             text-align: center;
-            padding: 20px;
         }
 
-        button {
-            background: var(--accent-color);
-            color: black;
-            border: none;
-            padding: 10px 20px;
-            font-weight: bold;
-            cursor: pointer;
-            border-radius: 5px;
-            margin-top: 15px;
-        }
-
-        .links-container {
+        .header-links {
             display: flex;
-            gap: 15px;
-            margin-bottom: 20px;
+            gap: 10px;
+            margin-top: 20px;
         }
 
-        .square-link {
+        .square-btn {
             width: 80px;
             height: 80px;
-            background: var(--card-bg);
+            background: var(--card);
             border: 1px solid #333;
+            border-radius: 12px;
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
             text-decoration: none;
             color: white;
-            font-size: 12px;
+            font-size: 11px;
+        }
+
+        .clicker-section {
             text-align: center;
-            border-radius: 12px;
-            transition: 0.3s;
+            margin: 20px 0;
         }
 
-        .square-link:hover { background: #252525; }
+        .main-coin {
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(circle, #fbc02d, #f57f17);
+            border-radius: 50%;
+            border: 6px solid #ff9800;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 80px;
+            cursor: pointer;
+            user-select: none;
+            margin: 15px auto;
+            box-shadow: 0 0 20px rgba(255,152,0,0.3);
+        }
 
-        .stats { font-size: 24px; margin: 20px 0; font-weight: bold; }
-        .slot-machine { font-size: 40px; background: #111; padding: 20px; border-radius: 15px; margin-bottom: 10px; }
-        
-        .memes-grid {
+        .main-coin.disabled { 
+            filter: grayscale(1); 
+            opacity: 0.3; 
+            pointer-events: none; 
+        }
+
+        .slot-display {
+            background: #000;
+            padding: 10px 25px;
+            border-radius: 15px;
+            font-size: 30px;
+            border: 2px solid var(--blue);
+            margin-bottom: 20px;
+        }
+
+        .bottom-ui {
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
+            grid-template-columns: 1fr 1fr;
             gap: 10px;
-            margin-top: 30px;
+            width: 90%;
+            max-width: 400px;
         }
-        .memes-grid img { width: 150px; border-radius: 8px; border: 1px solid #333; 
-        .leaderboard { width: 100%; max-width: 300px; margin-top: 20px; background: var(--card-bg); padding: 15px; border-radius: 10px; }
-        .leader-item { display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px solid #222; }
 
-        .cooldown-text { color: #ff4444; font-size: 14px; height: 20px; }
+        .ui-box {
+            background: var(--card);
+            padding: 15px;
+            border-radius: 15px;
+            border: 1px solid #222;
+        }
+
+        .memes {
+            margin-top: 30px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .memes img { width: 110px; border-radius: 8px; }
+
+        #cooldown-text { color: #ff4444; height: 20px; font-weight: bold; }
+        
+        button.accept-btn {
+            background: var(--blue);
+            color: white;
+            padding: 15px 40px;
+            border-radius: 30px;
+            border: none;
+            font-size: 18px;
+            cursor: pointer;
+        }
+
+        .shop-btn {
+            background: #222;
+            color: var(--gold);
+            border: 1px solid var(--gold);
+            padding: 5px;
+            width: 100%;
+            margin-top: 5px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
 
     <div id="disclaimer">
-        <h2>Внимание</h2>
-        <p>Данный сайт содержит элементы симуляции казино. <br> Продолжая, вы подтверждаете свое согласие.</p>
-        <button onclick="acceptDisclaimer()">Принять и войти</button>
+        <h1>ВНИМАНИЕ</h1>
+        <p>Вход в казино симулятор</p>
+        <button class="accept-btn" onclick="acceptDisclaimer()">ПРИНЯТЬ</button>
     </div>
 
-    <div class="links-container">
-        <a href="https://t.me/Logovo_bomja_fugu" class="square-link">Новости</a>
-        <a href="https://t.me/cherebuhh_tv" class="square-link">Друг</a>
+    <div class="header-links">
+        <a href="https://t.me/Logovo_bomja_fugu" class="square-btn">НОВОСТИ</a>
+        <a href="https://t.me/cherebuhh_tv" class="square-btn">ДРУГ</a>
     </div>
 
-    <div class="stats">Баланс: <span id="balance">0</span> 💰</div>
-
-    <div class="slot-machine" id="slots">🦆 | 🐡 | 7</div>
-    
-    <div class="cooldown-text" id="cooldown-status"></div>
-    <button id="click-btn" onclick="playSlots()">КРУТИТЬ (5 монеток за клик)</button>
-
-    <div class="leaderboard">
-        <h3 style="margin-top:0">Топ игроков</h3>
-        <div class="leader-item" style="color: gold;"><span>1. Павел Дуров</span> <span>∞</span></div>
-        <div class="leader-item"><span>2. Ты</span> <span id="user-score">0</span></div>
+    <div class="clicker-section">
+        <div id="balance" style="font-size: 40px; color: var(--gold);">0</div>
+        <div class="main-coin" id="coin" onclick="handleTap()">🐡</div>
+        <div id="cooldown-text"></div>
     </div>
 
-    <div class="memes-grid">
-        <img src="IMG_20260101_145923_474.jpg" alt="meme">
-        <img src="IMG_20260101_145902_173.jpg" alt="meme">
-        <img src="IMG_20260101_145849_625.jpg" alt="meme">
-        <img src="IMG_20260101_151706_375.jpg" alt="meme">
-        <img src="IMG_20260101_151704_265.jpg" alt="meme">
+    <div class="slot-display" id="slots">🦆 🐡 7</div>
+
+    <div class="bottom-ui">
+        <div class="ui-box">
+            <div style="font-size: 12px;">МАГАЗИН</div>
+            <button class="shop-btn" onclick="buyUpgrade()" id="upg-btn">+5 к клику (1000)</button>
+        </div>
+        <div class="ui-box">
+            <div style="font-size: 12px;">ТОП</div>
+            <div style="font-size: 12px; margin-top:5px;">
+                1. Дуров: ∞ <br>
+                2. Ты: <span id="top-val">0</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="memes">
+        <img src="IMG_20260101_145923_474.jpg">
+        <img src="IMG_20260101_145902_173.jpg">
+        <img src="IMG_20260101_145849_625.jpg">
+        <img src="IMG_20260101_151706_375.jpg">
+        <img src="IMG_20260101_151704_265.jpg">
     </div>
 
     <script>
-        let balance = 0;
+        let balance = parseInt(localStorage.getItem('fugu_balance')) || 0;
+        let clickValue = parseInt(localStorage.getItem('fugu_click')) || 5;
         let canClick = false;
         const symbols = ['🦆', '🐡', '💎', '💩', '7'];
 
+        updateUI();
+
         function acceptDisclaimer() {
             document.getElementById('disclaimer').style.display = 'none';
-            startCooldown(10000, "Зарядка системы (10с)...");
+            startCooldown(10000, "ЗАГРУЗКА 10с");
         }
 
-        function startCooldown(ms, message) {
+        function startCooldown(ms, msg) {
             canClick = false;
-            let btn = document.getElementById('click-btn');
-            let status = document.getElementById('cooldown-status');
-            btn.disabled = true;
-            status.innerText = message;
-            
+            const coin = document.getElementById('coin');
+            const status = document.getElementById('cooldown-text');
+            coin.classList.add('disabled');
+            status.innerText = msg;
             setTimeout(() => {
                 canClick = true;
-                btn.disabled = false;
+                coin.classList.remove('disabled');
                 status.innerText = "";
             }, ms);
         }
 
-        function playSlots() {
+        function handleTap() {
             if (!canClick) return;
-
-            startCooldown(3000, "Перезарядка (3с)...");
-
-            balance += 5;
-
-            let s1 = symbols[Math.floor(Math.random() * symbols.length)];
-            let s2 = symbols[Math.floor(Math.random() * symbols.length)];
-            let s3 = symbols[Math.floor(Math.random() * symbols.length)];
-
-            document.getElementById('slots').innerText = `${s1} | ${s2} | ${s3}`;
-
-
-            let winMultiplier = 0;
-
-            if (s1 === '💩' || s2 === '💩' || s3 === '💩') {
+            balance += clickValue;
+            let s = [
+                symbols[Math.floor(Math.random() * symbols.length)],
+                symbols[Math.floor(Math.random() * symbols.length)],
+                symbols[Math.floor(Math.random() * symbols.length)]
+            ];
+            document.getElementById('slots').innerText = s.join(' ');
+            if (s.includes('💩')) {
                 balance -= 20;
             } else {
-                if (s1 === s2 && s2 === s3) { 
-                    if (s1 === '🐡') winMultiplier = 3;
-                    else if (s1 === '7') winMultiplier = 3;
-                    else if (s1 === '🦆') winMultiplier = 1.3;
-                    else winMultiplier = 2;
-                } else if (s1 === s2 || s2 === s3 || s1 === s3) { 
-                    if ((s1==='7' && s2==='7') || (s2==='7' && s3==='7') || (s1==='7' && s3==='7')) {
-                        winMultiplier = 2; 
-                    } else {
-                        winMultiplier = 1.5;
-                    }
+                if (s[0] === s[1] && s[1] === s[2]) {
+                    if (s[0] === '🐡' || s[0] === '7') balance *= 3;
+                    else if (s[0] === '🦆') balance *= 1.3;
+                    else balance *= 2;
+                } else if (s[0] === s[1] || s[1] === s[2] || s[0] === s[2]) {
+                    if ((s[0]==='7'&&s[1]==='7')||(s[1]==='7'&&s[2]==='7')||(s[0]==='7'&&s[2]==='7')) balance *= 2;
+                    else balance *= 1.5;
                 }
             }
-
-            if (winMultiplier > 0) {
-                balance = Math.floor(balance * winMultiplier);
-            }
-
+            balance = Math.floor(balance);
+            saveData();
             updateUI();
+            startCooldown(3000, "ОЖИДАНИЕ 3с");
+        }
+
+        function buyUpgrade() {
+            if (balance >= 1000) {
+                balance -= 1000;
+                clickValue += 5;
+                saveData();
+                updateUI();
+            }
+        }
+
+        function saveData() {
+            localStorage.setItem('fugu_balance', balance);
+            localStorage.setItem('fugu_click', clickValue);
         }
 
         function updateUI() {
             if (balance < 0) balance = 0;
             document.getElementById('balance').innerText = balance;
-            document.getElementById('user-score').innerText = balance;
+            document.getElementById('top-val').innerText = balance;
         }
     </script>
 </body>
