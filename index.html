@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fugu Casino Simulator</title>
+    <title>Симулятор Казина Фуги</title>
     <style>
         :root {
             --bg-color: #121212;
@@ -24,17 +24,9 @@
             flex-direction: column;
             align-items: center;
             min-height: 100vh;
-            user-select: none; 
+            user-select: none;
         }
-
-        button {
-            cursor: pointer;
-            border: none;
-            outline: none;
-            transition: transform 0.1s;
-        }
-        button:active { transform: scale(0.95); }
-
+        
         .hidden { display: none !important; }
 
         .container {
@@ -50,7 +42,7 @@
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
             background: #000;
-            z-index: 1000;
+            z-index: 9999; 
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -69,6 +61,7 @@
             text-align: left;
             font-size: 0.9rem;
             box-shadow: 0 0 30px rgba(255, 68, 68, 0.2);
+            color: #fff;
         }
 
         .disclaimer-box h2 {
@@ -93,18 +86,35 @@
             margin-bottom: 15px;
             width: 100%;
             box-sizing: border-box;
+            font-size: 1.1rem;
         }
 
         .btn-accept {
             background: var(--accent-color);
             color: #000;
-            padding: 12px 20px;
+            padding: 15px 20px;
             font-weight: bold;
             border-radius: 8px;
             font-size: 16px;
             width: 100%;
             text-transform: uppercase;
+            cursor: pointer;
+            border: none;
         }
+
+        #loader {
+            color: white;
+        }
+        .loader-spinner {
+            border: 5px solid #333;
+            border-top: 5px solid var(--accent-color);
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
         header {
             width: 100%;
@@ -118,140 +128,59 @@
             gap: 5px;
         }
         
-        .header-top {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            width: 100%;
-        }
-
+        .header-top { display: flex; justify-content: space-between; align-items: center; width: 100%; }
         .stats { font-size: 1.2rem; font-weight: bold; }
         .money { color: var(--accent-color); }
         
         .timer-bar {
-            width: 100%;
-            background: #333;
-            height: 6px;
-            border-radius: 3px;
-            overflow: hidden;
-            margin-top: 10px;
+            width: 100%; background: #333; height: 6px; border-radius: 3px; overflow: hidden; margin-top: 10px;
         }
         .timer-fill {
-            height: 100%;
-            background: var(--danger-color);
-            width: 100%;
-            transition: width 1s linear;
+            height: 100%; background: var(--danger-color); width: 100%; transition: width 1s linear;
         }
-        .session-info {
-            font-size: 0.8rem;
-            color: #777;
-            text-align: center;
-        }
+        .session-info { font-size: 0.8rem; color: #777; text-align: center; }
 
-        .links-container {
-            display: flex;
-            justify-content: space-between;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
+        .links-container { display: flex; justify-content: space-between; gap: 10px; margin-bottom: 20px; }
         .link-box {
-            flex: 1;
-            aspect-ratio: 1/1;
-            background: #2a2a2a;
-            border-radius: var(--border-radius);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            text-decoration: none;
-            color: #fff;
-            font-weight: bold;
-            border: 2px solid #333;
-            transition: 0.3s;
-            position: relative;
+            flex: 1; aspect-ratio: 1/1; background: #2a2a2a; border-radius: var(--border-radius);
+            display: flex; justify-content: center; align-items: center; text-decoration: none;
+            color: #fff; font-weight: bold; border: 2px solid #333; transition: 0.3s;
         }
         .link-box:hover { border-color: var(--accent-color); background: #333; }
         
         .clicker-area { margin: 30px 0; }
         .coin-btn {
-            width: 200px;
-            height: 200px;
-            border-radius: 50%;
+            width: 200px; height: 200px; border-radius: 50%;
             background: radial-gradient(circle, #ffd700 0%, #b8860b 100%);
-            border: 5px solid #fff;
-            box-shadow: 0 0 20px rgba(255, 215, 0, 0.4);
-            font-size: 2rem;
-            color: #4a3b00;
-            font-weight: 900;
-            display: block;
-            margin: 0 auto;
+            border: 5px solid #fff; box-shadow: 0 0 20px rgba(255, 215, 0, 0.4);
+            font-size: 2rem; color: #4a3b00; font-weight: 900; display: block; margin: 0 auto;
         }
 
-        .slots-container {
-            background: var(--secondary-bg);
-            padding: 20px;
-            border-radius: var(--border-radius);
-            margin-bottom: 20px;
-        }
+        .slots-container { background: var(--secondary-bg); padding: 20px; border-radius: var(--border-radius); margin-bottom: 20px; }
         .slot-machine {
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-            font-size: 3rem;
-            margin: 20px 0;
-            background: #000;
-            padding: 10px;
-            border-radius: 8px;
+            display: flex; justify-content: center; gap: 10px; font-size: 3rem; margin: 20px 0;
+            background: #000; padding: 10px; border-radius: 8px;
         }
-        .bet-input {
-            width: 60px;
-            padding: 5px;
-            background: #333;
-            color: #fff;
-            border: 1px solid #555;
-            text-align: center;
-        }
+        .bet-input { width: 60px; padding: 5px; background: #333; color: #fff; border: 1px solid #555; text-align: center; }
 
         .maze-menu { display: flex; flex-direction: column; gap: 10px; }
-        .maze-btn { padding: 15px; border-radius: 8px; color: white; font-weight: bold; }
+        .maze-btn { padding: 15px; border-radius: 8px; color: white; font-weight: bold; border: none; }
         .btn-easy { background: #4caf50; }
         .btn-norm { background: #2196f3; }
         .btn-hard { background: #f44336; }
-
         #maze-canvas { background: #eee; margin: 0 auto; display: block; border-radius: 4px; }
-        .maze-controls {
-            display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px;
-            width: 150px; margin: 10px auto;
-        }
+        .maze-controls { display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px; width: 150px; margin: 10px auto; }
         .maze-ctrl-btn { padding: 15px; background: #444; color: white; border-radius: 5px; }
 
-        .panel {
-            background: var(--secondary-bg);
-            padding: 15px;
-            border-radius: var(--border-radius);
-            margin-bottom: 20px;
-            text-align: left;
-        }
-        .shop-item, .player-row {
-            display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #333;
-        }
-        .buy-btn {
-            background: var(--accent-color); color: #000; padding: 5px 10px; border-radius: 4px; font-size: 0.9rem;
-        }
+        .panel { background: var(--secondary-bg); padding: 15px; border-radius: var(--border-radius); margin-bottom: 20px; text-align: left; }
+        .shop-item, .player-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #333; }
+        .buy-btn { background: var(--accent-color); color: #000; padding: 5px 10px; border-radius: 4px; font-size: 0.9rem; }
 
-        .meme-gallery {
-            display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-top: 30px;
-        }
-        .meme-img {
-            width: 45%; max-width: 150px; border-radius: 8px; border: 1px solid #333; object-fit: cover;
-        }
+        .meme-gallery { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-top: 30px; }
+        .meme-img { width: 45%; max-width: 150px; border-radius: 8px; border: 1px solid #333; object-fit: cover; }
 
-        .nav-tabs {
-            display: flex; justify-content: space-around; margin-bottom: 20px;
-            background: #252525; padding: 5px; border-radius: 20px;
-        }
-        .tab-btn {
-            background: transparent; color: #888; padding: 10px; font-weight: bold; flex: 1;
-        }
+        .nav-tabs { display: flex; justify-content: space-around; margin-bottom: 20px; background: #252525; padding: 5px; border-radius: 20px; }
+        .tab-btn { background: transparent; color: #888; padding: 10px; font-weight: bold; flex: 1; border: none; }
         .tab-btn.active { background: #444; color: #fff; border-radius: 15px; }
 
     </style>
@@ -269,10 +198,11 @@
                 <p>4. <strong>ОГРАНИЧЕНИЕ:</strong> В целях борьбы с игровой зависимостью, время сессии ограничено 15 минутами. После этого доступ будет заблокирован.</p>
             </div>
             <input type="text" id="nicknameInput" class="input-nick" placeholder="Придумайте Никнейм" maxlength="12">
-            <button class="btn-accept" onclick="acceptDisclaimer()">Я всё понял, мне есть 18+</button>
+            <button class="btn-accept" id="acceptBtn">Я ВСЁ ПОНЯЛ, МНЕ ЕСТЬ 18+</button>
         </div>
 
         <div id="loader" class="hidden">
+            <div class="loader-spinner"></div>
             <h2>⚡ ПОДКЛЮЧЕНИЕ...</h2>
             <p>Проверка безопасности... <span id="loadTimer">10</span> сек.</p>
         </div>
@@ -283,13 +213,10 @@
         <h2>Время вышло!</h2>
         <p>Вы провели в игре 15 минут.</p>
         <p>Согласно правилам безопасной игры, сессия окончена.</p>
-        <p>Иди гуляй а то занимаешься всякой хуйней.</p>
-        <br>
-        <p style="color: #555;">(Обновите страницу позже, если очень хочется лудоман блять)</p>
+        <p>Иди потрогай травку а то занимаешься всякой хуйней.</p>
     </div>
 
     <div class="container hidden" id="mainApp">
-
         <header>
             <div class="header-top">
                 <div id="playerNick">Игрок</div>
@@ -301,7 +228,7 @@
 
         <div class="links-container">
             <a href="https://t.me/Logovo_bomja_fugu" target="_blank" class="link-box">НОВОСТИ<br>(Fugu)</a>
-            <a href="https://t.me/cherebuhh_tv" target="_blank" class="link-box">ДРУГ<br>(твич)</a>
+            <a href="https://t.me/cherebuhh_tv" target="_blank" class="link-box">ДРУГ<br>(TV)</a>
         </div>
         
         <nav class="nav-tabs">
@@ -312,13 +239,12 @@
             <button class="tab-btn" onclick="switchTab('top')">Топ</button>
         </nav>
 
-
         <div id="tab-clicker" class="tab-content">
             <div class="clicker-area">
                 <button class="coin-btn" onclick="clickCoin()">TAP</button>
             </div>
         </div>
-
+        
         <div id="tab-slots" class="tab-content hidden">
             <div class="slots-container">
                 <h3>Слоты Fugu</h3>
@@ -328,7 +254,7 @@
                 <p id="slotResult">Сделайте ставку!</p>
                 <div style="margin-top:10px;">
                     Ставка: <input type="number" id="betAmount" class="bet-input" value="100">
-                    <button class="btn-accept" style="width: auto; padding: 5px 15px;" id="spinBtn" onclick="spinSlots()">КРУТИТЬ</button>
+                    <button class="btn-accept" style="width: auto; padding: 5px 15px;" onclick="spinSlots()">КРУТИТЬ</button>
                 </div>
                 <div style="font-size: 0.8rem; margin-top: 10px; color: #888;">
                     3x🐡=x3 | 3x7️⃣=x3 | 3x🦆=x1.3<br>
@@ -359,7 +285,7 @@
                 </div>
             </div>
         </div>
-
+        
         <div id="tab-shop" class="tab-content hidden">
             <div class="panel">
                 <h3>Магазин</h3>
@@ -377,10 +303,10 @@
                 </div>
             </div>
         </div>
-        
+
         <div id="tab-top" class="tab-content hidden">
             <div class="panel">
-                <h3>Топ Богачей</h3>
+                <h3>Топ</h3>
                 <div id="leaderboardList">
                 </div>
             </div>
@@ -396,8 +322,8 @@
     </div>
 
     <script>
-
-        const MAX_SESSION_TIME = 15 * 60;
+        
+        const MAX_SESSION_TIME = 15 * 60; // 15 minutes
         let sessionTimer = MAX_SESSION_TIME;
         let timerInterval = null;
 
@@ -408,6 +334,36 @@
             lastSlotTime: 0,
             mazeReward: 0
         };
+
+        document.getElementById('acceptBtn').addEventListener('click', function() {
+            const nickInput = document.getElementById('nicknameInput').value;
+            
+            if(nickInput.trim() === "") {
+                alert("как тебя зовут малыш?");
+                return;
+            }
+            
+            state.nickname = nickInput;
+            
+            document.getElementById('disclaimer').style.display = 'none'; 
+            const loaderDiv = document.getElementById('loader');
+            loaderDiv.classList.remove('hidden');
+            loaderDiv.style.display = 'block';
+
+            let timeLeft = 10;
+            const timerEl = document.getElementById('loadTimer');
+            
+            const interval = setInterval(() => {
+                timeLeft--;
+                timerEl.innerText = timeLeft;
+                if(timeLeft <= 0) {
+                    clearInterval(interval);
+                    document.getElementById('overlay').style.display = 'none';
+                    document.getElementById('mainApp').classList.remove('hidden');
+                    loadGame();
+                }
+            }, 1000);
+        });
 
         function loadGame() {
             const saved = localStorage.getItem('fuguSave');
@@ -429,7 +385,6 @@
             document.getElementById('playerNick').innerText = state.nickname;
             generateLeaderboard();
         }
-
         function startSessionTimer() {
             const timeDisplay = document.getElementById('timeLeft');
             const fillBar = document.getElementById('timerFill');
@@ -453,33 +408,8 @@
         function endSession() {
             clearInterval(timerInterval);
             document.getElementById('mainApp').classList.add('hidden');
-            document.getElementById('banned-overlay').classList.remove('hidden')
-            sessionTimer = 0;
-        }
-
-        function acceptDisclaimer() {
-            const nickInput = document.getElementById('nicknameInput').value;
-            if(nickInput.trim() === "") {
-                alert("Введите никнейм!");
-                return;
-            }
-            state.nickname = nickInput;
-            
-            document.getElementById('disclaimer').classList.add('hidden');
-            document.getElementById('loader').classList.remove('hidden');
-            
-            let timeLeft = 10;
-            const timerEl = document.getElementById('loadTimer');
-            const interval = setInterval(() => {
-                timeLeft--;
-                timerEl.innerText = timeLeft;
-                if(timeLeft <= 0) {
-                    clearInterval(interval);
-                    document.getElementById('overlay').style.display = 'none';
-                    document.getElementById('mainApp').classList.remove('hidden');
-                    loadGame();
-                }
-            }, 1000);
+            document.getElementById('banned-overlay').classList.remove('hidden');
+            document.getElementById('banned-overlay').style.display = 'flex';
         }
 
         function switchTab(tabName) {
@@ -495,6 +425,7 @@
             saveGame();
         }
 
+        // --- МАГАЗИН ---
         function buyUpgrade(type, cost) {
             if(state.coins >= cost) {
                 state.coins -= cost;
@@ -506,7 +437,6 @@
                 alert("Не хватает монет!");
             }
         }
-
         const symbols = ['🦆', '🐡', '💎', '💩', '7️⃣'];
 
         function spinSlots() {
@@ -518,9 +448,13 @@
 
             const bet = parseInt(document.getElementById('betAmount').value);
             if(isNaN(bet) || bet <= 0) { alert("Неверная ставка"); return; }
-            if(state.coins < bet) { alert("Ты бомж, у тебя мало денег"); return; }
+            if(state.coins < bet) { alert("Мало денег"); return; }
 
             state.coins -= bet;
             state.lastSlotTime = now;
 
-            const display
+            const display = document.getElementById('slotDisplay');
+            display.innerHTML = '🎰🎰🎰';
+            
+            setTimeout(() => {
+                const r1 = symbols[Math.floor(Math.random() * sym
