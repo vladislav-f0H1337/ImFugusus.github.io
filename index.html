@@ -3,191 +3,49 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fugu Clicker & Casino</title>
+    <title>Fugu World</title>
     <style>
-        :root {
-            --gold: #ffcc00;
-            --blue: #0088cc;
-            --bg: #0a0a0a;
-            --card: #161616;
-            --neon: #00ffcc;
-        }
+        :root { --gold: #ffcc00; --blue: #0088cc; --bg: #0a0a0a; --card: #161616; --neon: #00ffcc; }
+        body { background: var(--bg); color: white; font-family: sans-serif; margin: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
+        
+        #disclaimer { position: fixed; inset: 0; background: rgba(0,0,0,0.98); display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 2000; text-align: center; }
+        .nick-input { padding: 12px; border-radius: 10px; border: 2px solid var(--blue); background: #000; color: white; margin-bottom: 15px; width: 200px; outline: none; }
+        
+        .header-links { display: flex; gap: 10px; margin-top: 15px; }
+        .square-btn { width: 75px; height: 75px; background: var(--card); border: 2px solid #333; border-radius: 12px; display: flex; justify-content: center; align-items: center; text-decoration: none; color: white; font-size: 10px; text-align: center; transition: 0.2s; }
+        .square-btn:active { transform: scale(0.9); }
 
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.05); box-shadow: 0 0 30px rgba(255,204,0,0.4); }
-            100% { transform: scale(1); }
-        }
+        .balance-box { text-align: center; margin: 15px 0; }
+        #balance { font-size: 45px; color: var(--gold); font-weight: 900; }
+        #user-nick-display { font-size: 14px; color: var(--blue); font-weight: bold; }
 
-        @keyframes shake {
-            0% { transform: translateX(0); }
-            25% { transform: translateX(-5px); }
-            50% { transform: translateX(5px); }
-            75% { transform: translateX(-5px); }
-            100% { transform: translateX(0); }
-        }
-
-        body {
-            background-color: var(--bg);
-            color: white;
-            font-family: 'Segoe UI', sans-serif;
-            margin: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            min-height: 100vh;
-            overflow-x: hidden;
-        }
-
-        #disclaimer {
-            position: fixed;
-            inset: 0;
-            background: rgba(0,0,0,0.98);
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-        }
-
-        .header-links {
-            display: flex;
-            gap: 15px;
-            margin-top: 20px;
-        }
-
-        .square-btn {
-            width: 85px;
-            height: 85px;
-            background: var(--card);
-            border: 2px solid #333;
-            border-radius: 18px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            text-decoration: none;
-            color: white;
-            font-size: 12px;
-            transition: 0.3s;
-        }
-
-        .square-btn:hover { border-color: var(--neon); transform: translateY(-3px); }
-
-        .balance-container {
-            text-align: center;
-            margin-top: 20px;
-        }
-
-        #balance {
-            font-size: 50px;
-            font-weight: 900;
-            color: var(--gold);
-            text-shadow: 0 0 20px rgba(255,204,0,0.5);
-        }
-
-        .main-coin {
-            width: 180px;
-            height: 180px;
-            background: radial-gradient(circle, #ffe082, #fbc02d);
-            border-radius: 50%;
-            border: 8px solid var(--gold);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 80px;
-            cursor: pointer;
-            user-select: none;
-            margin: 20px auto;
-            animation: pulse 3s infinite ease-in-out;
-            transition: transform 0.1s;
-        }
-
+        .main-coin { width: 140px; height: 140px; background: radial-gradient(circle, #ffe082, #fbc02d); border-radius: 50%; border: 5px solid var(--gold); display: flex; justify-content: center; align-items: center; font-size: 60px; cursor: pointer; user-select: none; margin: 10px auto; transition: 0.1s; box-shadow: 0 0 20px rgba(255,204,0,0.2); }
         .main-coin:active { transform: scale(0.9); }
 
-        .casino-section {
-            background: var(--card);
-            padding: 20px;
-            border-radius: 25px;
-            border: 2px solid #333;
-            width: 85%;
-            max-width: 350px;
-            text-align: center;
-            margin-bottom: 20px;
-        }
+        .game-card { background: var(--card); border-radius: 20px; border: 1px solid #333; width: 90%; max-width: 380px; padding: 15px; margin-bottom: 15px; text-align: center; }
+        .slot-display { background: #000; padding: 10px; border-radius: 10px; font-size: 30px; margin-bottom: 10px; border: 1px solid var(--blue); }
+        
+        .btn { background: var(--blue); color: white; border: none; padding: 12px; border-radius: 12px; width: 100%; font-weight: bold; cursor: pointer; }
+        .btn:disabled { background: #333; color: #777; cursor: not-allowed; }
 
-        .slot-display {
-            background: #000;
-            padding: 15px;
-            border-radius: 15px;
-            font-size: 35px;
-            border: 2px solid var(--blue);
-            margin-bottom: 15px;
-            min-height: 50px;
-        }
+        .maze-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 5px; background: #000; padding: 5px; margin-top: 10px; display: none; }
+        .maze-cell { width: 100%; aspect-ratio: 1; background: #222; border-radius: 4px; display: flex; justify-content: center; align-items: center; cursor: pointer; }
+        .maze-cell.target { background: var(--neon); color: black; }
 
-        .casino-btn {
-            background: linear-gradient(135deg, #0088cc, #005588);
-            color: white;
-            border: none;
-            padding: 12px 30px;
-            border-radius: 15px;
-            font-weight: bold;
-            cursor: pointer;
-            width: 100%;
-            font-size: 16px;
-        }
+        .memes-container { display: flex; flex-direction: column; gap: 15px; width: 100%; align-items: center; padding-bottom: 60px; }
+        .memes-container img { width: 90%; max-width: 350px; border-radius: 15px; border: 2px solid #222; }
 
-        .casino-btn.disabled { filter: grayscale(1); opacity: 0.5; cursor: not-allowed; }
-
-        .ui-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            width: 90%;
-            max-width: 400px;
-        }
-
-        .ui-box {
-            background: var(--card);
-            padding: 15px;
-            border-radius: 18px;
-            border: 1px solid #222;
-        }
-
-        .memes-container {
-            margin-top: 40px;
-            width: 100%;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 20px;
-            padding-bottom: 40px;
-        }
-
-        .memes-container img {
-            width: 90%;
-            max-width: 350px;
-            border-radius: 20px;
-            border: 3px solid #222;
-            transition: 0.3s;
-        }
-
-        .memes-container img:hover { transform: scale(1.02); border-color: var(--blue); }
-
-        #cooldown-text { 
-            color: #ff4444; 
-            font-size: 14px; 
-            margin-bottom: 5px;
-            font-weight: bold;
-        }
+        .top-list { text-align: left; font-size: 12px; margin-top: 10px; background: #000; padding: 10px; border-radius: 10px; }
     </style>
 </head>
 <body>
 
     <div id="disclaimer">
-        <h1 style="color:var(--gold)">ДИСКЛЕЙМЕР</h1>
-        <p style="text-align:center; padding: 0 20px;">Входя на сайт, вы соглашаетесь с правилами симулятора казино.</p>
-        <button onclick="acceptDisclaimer()" style="background:var(--gold); padding:15px 50px; border:none; border-radius:30px; font-weight:bold; cursor:pointer;">ПРИНЯТЬ</button>
+        <h1 style="color:var(--gold)">FUGU CASINO</h1>
+        <p>Введи свой никнейм:</p>
+        <input type="text" id="nickname-input" class="nick-input" placeholder="Твой ник..." maxlength="12">
+        <br>
+        <button onclick="saveNickAndStart()" style="padding:15px 40px; border-radius:20px; background:var(--gold); border:none; font-weight:bold; cursor:pointer;">ИГРАТЬ</button>
     </div>
 
     <div class="header-links">
@@ -195,31 +53,32 @@
         <a href="https://t.me/cherebuhh_tv" class="square-btn">🤝 ДРУГ</a>
     </div>
 
-    <div class="balance-container">
-        <div style="font-size: 14px; opacity: 0.5;">ТВОЙ БАЛАНС</div>
+    <div class="balance-box">
+        <div id="user-nick-display">Игрок</div>
         <div id="balance">0</div>
     </div>
 
-    <div class="main-coin" onclick="handleTap()">🐡</div>
+    <div class="main-coin" onclick="tap()">🐡</div>
 
-    <div class="casino-section">
-        <div id="cooldown-text"></div>
+    <div class="game-card">
+        <div style="font-size: 12px; margin-bottom:5px;">🎰 СЛОТЫ (ДЕП 50)</div>
         <div class="slot-display" id="slots">🦆 🐡 7</div>
-        <button class="casino-btn" id="casino-btn" onclick="playCasino()">ИГРАТЬ (ДЕП 50)</button>
+        <div id="cd-casino" style="font-size: 12px; color: #ff4444; height: 15px; margin-bottom: 5px;"></div>
+        <button class="btn" id="btn-casino" onclick="playSlots()">КРУТИТЬ</button>
     </div>
 
-    <div class="ui-grid">
-        <div class="ui-box">
-            <div style="font-size: 12px; color:var(--blue)">МАГАЗИН</div>
-            <button style="width:100%; margin-top:10px; border-radius:8px; border:1px solid var(--blue); background:none; color:white; cursor:pointer;" onclick="buyUpgrade()">+10 Клик (1500)</button>
+    <div class="game-card">
+        <div style="font-size: 12px;">🏆 ТОП ИГРОКОВ</div>
+        <div class="top-list">
+            <div style="color:var(--gold)">1. Павел Дуров: ∞</div>
+            <div>2. <span id="top-nick">Ты</span>: <span id="top-bal">0</span></div>
         </div>
-        <div class="ui-box">
-            <div style="font-size: 12px; color:var(--gold)">ТОП</div>
-            <div style="font-size: 11px; margin-top:8px;">
-                1. Дуров: ∞ <br>
-                2. Ты: <span id="top-val">0</span>
-            </div>
-        </div>
+    </div>
+
+    <div class="game-card">
+        <div style="font-size: 12px; margin-bottom:5px;">🌀 ЛАБИРИНТ (727 / 3444 / 2200)</div>
+        <button class="btn" onclick="startMaze()">НАЙТИ ВЫХОД 🎁</button>
+        <div class="maze-grid" id="maze-grid"></div>
     </div>
 
     <div class="memes-container">
@@ -231,97 +90,91 @@
     </div>
 
     <script>
-        let balance = parseInt(localStorage.getItem('fugu_balance')) || 0;
-        let clickValue = parseInt(localStorage.getItem('fugu_click')) || 5;
-        let canPlay = false;
+        let balance = parseInt(localStorage.getItem('fugu_bal')) || 0;
+        let nickname = localStorage.getItem('fugu_nick') || "";
+        let cVal = 5;
+        let canSlots = false;
         const symbols = ['🦆', '🐡', '💎', '💩', '7'];
 
-        updateUI();
-
-        function acceptDisclaimer() {
+        if(nickname) {
             document.getElementById('disclaimer').style.display = 'none';
-            startCooldown(10000);
+            initGame();
         }
 
-        function startCooldown(ms) {
-            canPlay = false;
-            const btn = document.getElementById('casino-btn');
-            const status = document.getElementById('cooldown-text');
-            btn.classList.add('disabled');
-            
-            let timeLeft = ms/1000;
-            let timer = setInterval(() => {
-                status.innerText = "ЗАРЯДКА: " + timeLeft.toFixed(1) + "s";
-                timeLeft -= 0.1;
-                if(timeLeft <= 0) {
-                    clearInterval(timer);
-                    canPlay = true;
-                    btn.classList.remove('disabled');
-                    status.innerText = "";
-                }
+        function saveNickAndStart() {
+            let input = document.getElementById('nickname-input').value.trim();
+            nickname = input || "Аноним";
+            localStorage.setItem('fugu_nick', nickname);
+            document.getElementById('disclaimer').style.display = 'none';
+            initGame();
+        }
+
+        function initGame() {
+            document.getElementById('user-nick-display').innerText = nickname;
+            document.getElementById('top-nick').innerText = nickname;
+            update();
+            setCD('btn-casino', 'cd-casino', 10000);
+        }
+
+        function tap() { balance += cVal; update(); }
+
+        function setCD(btnId, txtId, ms) {
+            canSlots = false;
+            let btn = document.getElementById(btnId);
+            let txt = document.getElementById(txtId);
+            btn.disabled = true;
+            let sec = ms/1000;
+            let itv = setInterval(() => {
+                txt.innerText = "ЗАРЯДКА: " + sec.toFixed(1) + "s";
+                sec -= 0.1;
+                if(sec <= 0) { clearInterval(itv); btn.disabled = false; txt.innerText = ""; canSlots = true; }
             }, 100);
         }
 
-        function handleTap() {
-            balance += clickValue;
-            updateUI();
-            saveData();
-        }
-
-        function playCasino() {
-            if (!canPlay || balance < 50) {
-                if(balance < 50) alert("Нужно минимум 50 монет!");
-                return;
-            }
-            
+        function playSlots() {
+            if(!canSlots || balance < 50) return;
             balance -= 50;
-            let s = [
-                symbols[Math.floor(Math.random() * symbols.length)],
-                symbols[Math.floor(Math.random() * symbols.length)],
-                symbols[Math.floor(Math.random() * symbols.length)]
-            ];
-            
+            let s = [symbols[Math.floor(Math.random()*5)], symbols[Math.floor(Math.random()*5)], symbols[Math.floor(Math.random()*5)]];
             document.getElementById('slots').innerText = s.join(' ');
-            document.getElementById('slots').style.animation = "shake 0.3s";
-            setTimeout(() => { document.getElementById('slots').style.animation = ""; }, 300);
-
-            if (s.includes('💩')) {
-                balance = Math.floor(balance * 0.7);
-            } else {
-                if (s[0] === s[1] && s[1] === s[2]) {
-                    if (s[0] === '🐡' || s[0] === '7') balance *= 3;
-                    else if (s[0] === '🦆') balance *= 1.3;
-                    else balance *= 2;
-                } else if (s[0] === s[1] || s[1] === s[2] || s[0] === s[2]) {
-                    if ((s[0]==='7'&&s[1]==='7')||(s[1]==='7'&&s[2]==='7')||(s[0]==='7'&&s[2]==='7')) balance *= 2;
-                    else balance *= 1.5;
-                }
+            
+            if(s.includes('💩')) balance = Math.floor(balance * 0.7);
+            else if(s[0]===s[1] && s[1]===s[2]) {
+                if(s[0]==='🐡'||s[0]==='7') balance *= 3;
+                else if(s[0]==='🦆') balance *= 1.3;
+                else balance *= 2;
+            } else if(s[0]===s[1]||s[1]===s[2]||s[0]===s[2]) {
+                if(s.includes('7')) balance *= 2; else balance *= 1.5;
             }
-
-            balance = Math.floor(balance);
-            updateUI();
-            saveData();
-            startCooldown(3000);
+            update();
+            setCD('btn-casino', 'cd-casino', 3000);
         }
 
-        function buyUpgrade() {
-            if (balance >= 1500) {
-                balance -= 1500;
-                clickValue += 10;
-                saveData();
-                updateUI();
+        function startMaze() {
+            const grid = document.getElementById('maze-grid');
+            grid.style.display = 'grid';
+            grid.innerHTML = '';
+            for(let i=0; i<25; i++) {
+                let cell = document.createElement('div');
+                cell.className = 'maze-cell';
+                if(i === 24) { cell.innerText = '🎁'; cell.className += ' target'; cell.onclick = winMaze; }
+                else if(Math.random() < 0.25 && i !== 0) { cell.style.background = '#111'; cell.style.pointerEvents = 'none'; }
+                else { cell.innerText = '•'; }
+                grid.appendChild(cell);
             }
         }
 
-        function saveData() {
-            localStorage.setItem('fugu_balance', balance);
-            localStorage.setItem('fugu_click', clickValue);
+        function winMaze() {
+            balance += 727;
+            alert("Ты нашел выход! +727 монет");
+            document.getElementById('maze-grid').style.display = 'none';
+            update();
         }
 
-        function updateUI() {
-            if (balance < 0) balance = 0;
-            document.getElementById('balance').innerText = balance;
-            document.getElementById('top-val').innerText = balance;
+        function update() {
+            let b = Math.floor(balance);
+            document.getElementById('balance').innerText = b;
+            document.getElementById('top-bal').innerText = b;
+            localStorage.setItem('fugu_bal', balance);
         }
     </script>
 </body>
