@@ -2,44 +2,51 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Fugu Ultimate Club</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fugu World Evolution</title>
     <style>
         :root { --gold: #ffcc00; --blue: #0088cc; --bg: #0a0a0a; --card: #161616; --neon: #00ffcc; --red: #ff4444; }
-        body { background: var(--bg); color: white; font-family: sans-serif; margin: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; touch-action: none; }
+        body { background: var(--bg); color: white; font-family: sans-serif; margin: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; overflow-y: auto; }
         
-        /* Баланс и Ник */
-        .header { text-align: center; margin: 20px 0; }
+        .header { text-align: center; margin: 20px 0; width: 100%; }
         #balance { font-size: 50px; color: var(--gold); font-weight: 900; text-shadow: 0 0 15px rgba(255,204,0,0.4); }
-        .nick-tag { font-size: 14px; color: var(--blue); opacity: 0.8; }
+        .nick-tag { font-size: 14px; color: #888; }
 
-        /* Монета для кликов */
         .main-coin { width: 140px; height: 140px; background: radial-gradient(circle, #ffe082, #fbc02d); border-radius: 50%; border: 6px solid var(--gold); display: flex; justify-content: center; align-items: center; font-size: 70px; cursor: pointer; user-select: none; margin: 10px auto; box-shadow: 0 0 20px rgba(255,204,0,0.3); transition: 0.1s; }
         .main-coin:active { transform: scale(0.9); }
 
-        /* Карточки игр */
-        .game-card { background: var(--card); border-radius: 20px; border: 1px solid #333; width: 92%; max-width: 380px; padding: 15px; margin-bottom: 15px; text-align: center; }
-        .btn { background: var(--blue); color: white; border: none; padding: 14px; border-radius: 12px; width: 100%; font-weight: bold; cursor: pointer; font-size: 16px; margin-top: 5px; }
-        
-        /* Деп-машина (Слоты) */
-        .slot-display { background: #000; padding: 15px; border-radius: 12px; font-size: 32px; border: 2px solid var(--blue); margin: 10px 0; letter-spacing: 5px; }
+        .game-card { background: var(--card); border-radius: 20px; border: 1px solid #333; width: 92%; max-width: 380px; padding: 15px; margin-bottom: 20px; text-align: center; box-sizing: border-box; }
+        .btn { background: var(--blue); color: white; border: none; padding: 14px; border-radius: 12px; width: 100%; font-weight: bold; cursor: pointer; font-size: 16px; transition: 0.2s; }
+        .btn:active { background: #005f8d; }
 
-        /* Лабиринт */
-        #maze-container { width: 300px; height: 300px; background: #000; position: relative; margin: 10px auto; border: 3px solid #444; display: none; overflow: hidden; }
-        .maze-wall { position: absolute; background: #444; }
-        .moving-wall { position: absolute; background: var(--red); box-shadow: 0 0 8px var(--red); }
-        #maze-player { position: absolute; width: 16px; height: 16px; background: var(--neon); border-radius: 50%; z-index: 100; pointer-events: none; }
-        #maze-target { position: absolute; width: 35px; height: 35px; background: var(--gold); right: 5px; bottom: 5px; display: flex; justify-content: center; align-items: center; border-radius: 5px; }
+        /* Слоты */
+        .slot-display { background: #000; padding: 15px; border-radius: 12px; font-size: 32px; border: 2px solid var(--blue); margin: 10px 0; display: flex; justify-content: center; gap: 10px; }
+
+        /* ГЕНЕРИРУЕМЫЙ ЛАБИРИНТ */
+        #maze-grid { 
+            display: grid; 
+            grid-template-columns: repeat(10, 1fr); 
+            gap: 2px; 
+            background: #222; 
+            padding: 5px; 
+            margin-top: 15px; 
+            display: none; 
+            border-radius: 8px;
+            touch-action: none; /* Блокирует свайп только ВНУТРИ лабиринта */
+        }
+        .cell { width: 100%; aspect-ratio: 1; background: #000; border-radius: 2px; display: flex; align-items: center; justify-content: center; font-size: 12px; }
+        .wall { background: #333; }
+        .player { background: var(--neon); border-radius: 50%; box-shadow: 0 0 8px var(--neon); }
+        .end { background: var(--gold); border-radius: 4px; }
 
         /* Рыбалка */
-        #fishing-zone { width: 100%; height: 120px; background: #001a33; border-radius: 15px; position: relative; display: none; overflow: hidden; border: 2px solid var(--blue); margin-top: 10px; }
-        .fish { position: absolute; cursor: pointer; font-size: 24px; padding: 10px; z-index: 10; }
+        #fishing-zone { width: 100%; height: 150px; background: #001a33; border-radius: 15px; position: relative; display: none; overflow: hidden; border: 2px solid var(--blue); margin-top: 15px; }
+        .fish { position: absolute; font-size: 28px; cursor: pointer; padding: 10px; z-index: 10; touch-action: none; }
 
-        /* Мемы */
-        .memes { display: flex; flex-direction: column; gap: 15px; width: 100%; align-items: center; padding: 20px 0 60px 0; }
-        .memes img { width: 90%; max-width: 350px; border-radius: 15px; border: 2px solid #222; }
-
-        .top-box { text-align: left; font-size: 13px; background: #000; padding: 10px; border-radius: 10px; margin-top: 5px; }
+        /* Топ и Мемы */
+        .top-box { text-align: left; font-size: 14px; background: #000; padding: 12px; border-radius: 12px; margin-top: 10px; border: 1px dashed #444; }
+        .memes { display: flex; flex-direction: column; gap: 20px; width: 100%; align-items: center; padding: 20px 0 100px 0; }
+        .memes img { width: 90%; max-width: 360px; border-radius: 15px; border: 2px solid #222; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
     </style>
 </head>
 <body>
@@ -52,46 +59,38 @@
     <div class="main-coin" onclick="tap()">🐡</div>
 
     <div class="game-card">
-        <div style="font-size:12px; opacity:0.7">🎰 ДЕП-МАШИНА (ЦЕНА: 50)</div>
-        <div class="slot-display" id="slots">🦆 🐡 7</div>
-        <div id="cd-slots" style="font-size:12px; color:var(--red); height:15px"></div>
+        <div style="font-size:12px; opacity:0.7; margin-bottom: 5px;">🎰 ДЕП-МАШИНА (50$)</div>
+        <div class="slot-display" id="slots"><span>💎</span><span>7</span><span>🦆</span></div>
+        <div id="cd-slots" style="font-size:12px; color:var(--red); height:15px; margin-bottom: 5px;"></div>
         <button class="btn" id="btn-slots" onclick="playSlots()">КРУТИТЬ КАЗИК</button>
     </div>
 
     <div class="game-card">
-        <div style="font-size:12px; margin-bottom:5px">🏆 ТАБЛИЦА ЛИДЕРОВ</div>
+        <div style="font-size:12px; margin-bottom:5px">🏆 ЛУЧШИЕ ИЗ ЛУЧШИХ</div>
         <div class="top-box">
             <div style="color:var(--gold)">1. Павел Дуров: ∞</div>
-            <div>2. <span id="t-nick">FuguSUS</span>: <span id="t-bal">0</span></div>
+            <div style="margin-top: 5px;">2. <span id="t-nick">FuguSUS</span>: <span id="t-bal">0</span></div>
         </div>
     </div>
 
     <div class="game-card">
-        <div style="font-size:12px">🌀 УЛЬТРА ЛАБИРИНТ (НАГРАДА: 5000)</div>
-        <button class="btn" onclick="initMaze()">ВОЙТИ В ЛАБИРИНТ</button>
-        <div id="maze-container">
-            <div id="maze-player"></div>
-            <div id="maze-target">🎁</div>
-            <div class="maze-wall" style="top:60px; left:0; width:240px; height:15px;"></div>
-            <div class="maze-wall" style="top:120px; left:60px; width:240px; height:15px;"></div>
-            <div class="maze-wall" style="top:180px; left:0; width:240px; height:15px;"></div>
-            <div class="maze-wall" style="top:240px; left:60px; width:240px; height:15px;"></div>
-            <div id="m-wall-1" class="moving-wall" style="top:75px; left:100px; width:15px; height:45px;"></div>
-            <div id="m-wall-2" class="moving-wall" style="top:135px; left:180px; width:15px; height:45px;"></div>
-        </div>
+        <div style="font-size:14px; font-weight: bold; color: var(--neon);">🌀 RANDOM MAZE (10,000$)</div>
+        <p style="font-size: 10px; opacity: 0.6;">Найди путь к 🎁 через 100 клеток!</p>
+        <button class="btn" onclick="generateMaze()">СГЕНЕРИРОВАТЬ И ВОЙТИ</button>
+        <div id="maze-grid"></div>
     </div>
 
     <div class="game-card">
-        <div style="font-size:12px">🎣 РЫБАЛКА (СТАЯ)</div>
-        <button class="btn" onclick="startFishing()">НАЧАТЬ РЫБАЛКУ</button>
+        <div style="font-size:14px; font-weight: bold; color: var(--blue);">🎣 РЫБАЛКА 2.0</div>
+        <button class="btn" onclick="startFishing()">ЗАБРОСИТЬ СЕТИ</button>
         <div id="fishing-zone"></div>
     </div>
 
     <div class="memes">
         <img src="IMG_20260101_145923_474.jpg">
+        <img src="IMG_20260101_151706_375.jpg">
         <img src="IMG_20260101_145902_173.jpg">
         <img src="IMG_20260101_145849_625.jpg">
-        <img src="IMG_20260101_151706_375.jpg">
         <img src="IMG_20260101_151704_265.jpg">
     </div>
 
@@ -107,92 +106,73 @@
 
         function playSlots() {
             if(!canSlots || balance < 50) return;
-            balance -= 50;
-            canSlots = false;
+            balance -= 50; canSlots = false;
             let btn = document.getElementById('btn-slots');
             let cd = document.getElementById('cd-slots');
-            
-            let symbols = ['🦆', '🐡', '💎', '💩', '7'];
-            let s = [symbols[Math.floor(Math.random()*5)], symbols[Math.floor(Math.random()*5)], symbols[Math.floor(Math.random()*5)]];
-            document.getElementById('slots').innerText = s.join(' ');
+            let symbols = ['🦆', '🐡', '💎', '7', '💩'];
+            let res = [symbols[Math.floor(Math.random()*5)], symbols[Math.floor(Math.random()*5)], symbols[Math.floor(Math.random()*5)]];
+            document.getElementById('slots').innerHTML = `<span>${res[0]}</span><span>${res[1]}</span><span>${res[2]}</span>`;
 
-            if(s.includes('💩')) balance = Math.floor(balance * 0.7);
-            else if(s[0]===s[1] && s[1]===s[2]) balance *= 5;
-            else if(s[0]===s[1] || s[1]===s[2] || s[0]===s[2]) balance *= 2;
+            if(res.includes('💩')) balance = Math.floor(balance * 0.5);
+            else if(res[0]===res[1] && res[1]===res[2]) balance += 5000;
+            else if(res[0]===res[1] || res[1]===res[2] || res[0]===res[2]) balance += 200;
 
             update();
-            let time = 3;
-            let itv = setInterval(() => {
-                cd.innerText = "ПЕРЕЗАРЯДКА: " + time + "с";
-                time--;
-                if(time < 0) { clearInterval(itv); cd.innerText = ""; canSlots = true; }
+            let s = 3;
+            let i = setInterval(() => {
+                cd.innerText = `ОТКАТ: ${s}с`; s--;
+                if(s<0){ clearInterval(i); cd.innerText=""; canSlots=true; }
             }, 1000);
         }
 
-        // Лабиринт
-        let isDragging = false;
-        let wPos = 0; let wDir = 2;
-        function initMaze() {
-            const container = document.getElementById('maze-container');
-            const player = document.getElementById('maze-player');
-            container.style.display = 'block';
-            player.style.top = "10px"; player.style.left = "10px";
-
-            if(!window.mInt) {
-                window.mInt = setInterval(() => {
-                    wPos += wDir; if(wPos > 150 || wPos < 0) wDir *= -1;
-                    document.getElementById('m-wall-1').style.left = (50 + wPos) + "px";
-                    document.getElementById('m-wall-2').style.left = (250 - wPos) + "px";
-                }, 20);
+        // ЛОГИКА РАНДОМНОГО ЛАБИРИНТА
+        function generateMaze() {
+            const grid = document.getElementById('maze-grid');
+            grid.style.display = 'grid';
+            grid.innerHTML = '';
+            let pPos = 0;
+            for(let i=0; i<100; i++) {
+                let cell = document.createElement('div');
+                cell.className = 'cell';
+                if(i === 0) cell.classList.add('player');
+                else if(i === 99) { cell.classList.add('end'); cell.innerText = '🎁'; }
+                else if(Math.random() < 0.3) cell.classList.add('wall');
+                
+                cell.onclick = () => {
+                    // Простая проверка соседства (чтобы не прыгали через стены)
+                    let diff = Math.abs(i - pPos);
+                    if((diff === 1 || diff === 10) && !cell.classList.contains('wall')) {
+                        document.querySelector('.player').classList.remove('player');
+                        cell.classList.add('player');
+                        pPos = i;
+                        if(i === 99) { alert("ВЫЙГРЫШ 10к!"); balance += 10000; grid.style.display='none'; update(); }
+                    }
+                };
+                grid.appendChild(cell);
             }
-
-            const move = (e) => {
-                if(!isDragging) return;
-                const rect = container.getBoundingClientRect();
-                const t = e.touches ? e.touches[0] : e;
-                let x = t.clientX - rect.left - 8;
-                let y = t.clientY - rect.top - 8;
-                player.style.left = x + "px"; player.style.top = y + "px";
-
-                if(x > 260 && y > 260) {
-                    balance += 5000; alert("ПОБЕДА! +5000");
-                    isDragging = false; container.style.display = 'none'; update();
-                }
-
-                let hit = document.elementFromPoint(t.clientX, t.clientY);
-                if(hit && (hit.classList.contains('maze-wall') || hit.classList.contains('moving-wall'))) {
-                    isDragging = false; alert("ПРОИГРАЛ!");
-                    player.style.top = "10px"; player.style.left = "10px";
-                }
-            };
-            container.onpointerdown = (e) => { isDragging = true; move(e); };
-            window.onpointerup = () => isDragging = false;
-            container.onpointermove = move;
         }
 
-        // Рыбалка
+        // РЫБАЛКА
         function startFishing() {
             const zone = document.getElementById('fishing-zone');
             zone.style.display = 'block'; zone.innerHTML = '';
-            for(let i=0; i<5; i++) createFish(false);
-            createFish(true);
-        }
-
-        function createFish(gold) {
-            const zone = document.getElementById('fishing-zone');
-            const f = document.createElement('div');
-            f.className = 'fish'; f.innerText = gold ? '👑' : '🐡';
-            f.style.top = Math.random() * 70 + "px";
-            let pos = Math.random() * 80; let speed = gold ? 4 : 2; let dir = 1;
-            let move = setInterval(() => {
-                pos += speed * dir; if(pos > 90 || pos < 0) dir *= -1;
-                f.style.left = pos + "%";
-            }, 30);
-            f.onpointerdown = (e) => {
-                e.stopPropagation(); clearInterval(move); f.remove();
-                balance += gold ? 1000 : 150; update();
-            };
-            zone.appendChild(f);
+            for(let i=0; i<6; i++) {
+                let f = document.createElement('div');
+                f.className = 'fish'; f.innerText = Math.random() > 0.8 ? '👑' : '🐡';
+                f.style.top = Math.random() * 80 + "px";
+                let pos = Math.random() * 80; let dir = Math.random() > 0.5 ? 1 : -1;
+                let move = setInterval(() => {
+                    pos += (Math.random() * 3 + 2) * dir;
+                    if(pos > 90 || pos < 0) dir *= -1;
+                    f.style.left = pos + "%";
+                }, 40);
+                f.onpointerdown = () => { 
+                    clearInterval(move); 
+                    balance += (f.innerText === '👑' ? 2000 : 300); 
+                    f.remove(); update(); 
+                };
+                zone.appendChild(f);
+            }
         }
 
         function update() {
