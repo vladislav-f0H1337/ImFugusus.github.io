@@ -3,25 +3,40 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fugu Clicker Save</title>
+    <title>Fugu Clicker & Casino</title>
     <style>
         :root {
             --gold: #ffcc00;
             --blue: #0088cc;
             --bg: #0a0a0a;
             --card: #161616;
+            --neon: #00ffcc;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); box-shadow: 0 0 30px rgba(255,204,0,0.4); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes shake {
+            0% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            50% { transform: translateX(5px); }
+            75% { transform: translateX(-5px); }
+            100% { transform: translateX(0); }
         }
 
         body {
             background-color: var(--bg);
             color: white;
-            font-family: sans-serif;
+            font-family: 'Segoe UI', sans-serif;
             margin: 0;
             display: flex;
             flex-direction: column;
             align-items: center;
             min-height: 100vh;
-            padding-bottom: 50px;
+            overflow-x: hidden;
         }
 
         #disclaimer {
@@ -33,67 +48,98 @@
             justify-content: center;
             align-items: center;
             z-index: 1000;
-            text-align: center;
         }
 
         .header-links {
             display: flex;
-            gap: 10px;
+            gap: 15px;
             margin-top: 20px;
         }
 
         .square-btn {
-            width: 80px;
-            height: 80px;
+            width: 85px;
+            height: 85px;
             background: var(--card);
-            border: 1px solid #333;
-            border-radius: 12px;
+            border: 2px solid #333;
+            border-radius: 18px;
             display: flex;
-            flex-direction: column;
             justify-content: center;
             align-items: center;
             text-decoration: none;
             color: white;
-            font-size: 11px;
+            font-size: 12px;
+            transition: 0.3s;
         }
 
-        .clicker-section {
+        .square-btn:hover { border-color: var(--neon); transform: translateY(-3px); }
+
+        .balance-container {
             text-align: center;
-            margin: 20px 0;
+            margin-top: 20px;
+        }
+
+        #balance {
+            font-size: 50px;
+            font-weight: 900;
+            color: var(--gold);
+            text-shadow: 0 0 20px rgba(255,204,0,0.5);
         }
 
         .main-coin {
-            width: 200px;
-            height: 200px;
-            background: radial-gradient(circle, #fbc02d, #f57f17);
+            width: 180px;
+            height: 180px;
+            background: radial-gradient(circle, #ffe082, #fbc02d);
             border-radius: 50%;
-            border: 6px solid #ff9800;
+            border: 8px solid var(--gold);
             display: flex;
             justify-content: center;
             align-items: center;
             font-size: 80px;
             cursor: pointer;
             user-select: none;
-            margin: 15px auto;
-            box-shadow: 0 0 20px rgba(255,152,0,0.3);
+            margin: 20px auto;
+            animation: pulse 3s infinite ease-in-out;
+            transition: transform 0.1s;
         }
 
-        .main-coin.disabled { 
-            filter: grayscale(1); 
-            opacity: 0.3; 
-            pointer-events: none; 
+        .main-coin:active { transform: scale(0.9); }
+
+        .casino-section {
+            background: var(--card);
+            padding: 20px;
+            border-radius: 25px;
+            border: 2px solid #333;
+            width: 85%;
+            max-width: 350px;
+            text-align: center;
+            margin-bottom: 20px;
         }
 
         .slot-display {
             background: #000;
-            padding: 10px 25px;
+            padding: 15px;
             border-radius: 15px;
-            font-size: 30px;
+            font-size: 35px;
             border: 2px solid var(--blue);
-            margin-bottom: 20px;
+            margin-bottom: 15px;
+            min-height: 50px;
         }
 
-        .bottom-ui {
+        .casino-btn {
+            background: linear-gradient(135deg, #0088cc, #005588);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 15px;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+            font-size: 16px;
+        }
+
+        .casino-btn.disabled { filter: grayscale(1); opacity: 0.5; cursor: not-allowed; }
+
+        .ui-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 10px;
@@ -104,80 +150,79 @@
         .ui-box {
             background: var(--card);
             padding: 15px;
-            border-radius: 15px;
+            border-radius: 18px;
             border: 1px solid #222;
         }
 
-        .memes {
-            margin-top: 30px;
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 8px;
-        }
-
-        .memes img { width: 110px; border-radius: 8px; }
-
-        #cooldown-text { color: #ff4444; height: 20px; font-weight: bold; }
-        
-        button.accept-btn {
-            background: var(--blue);
-            color: white;
-            padding: 15px 40px;
-            border-radius: 30px;
-            border: none;
-            font-size: 18px;
-            cursor: pointer;
-        }
-
-        .shop-btn {
-            background: #222;
-            color: var(--gold);
-            border: 1px solid var(--gold);
-            padding: 5px;
+        .memes-container {
+            margin-top: 40px;
             width: 100%;
-            margin-top: 5px;
-            border-radius: 5px;
-            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+            padding-bottom: 40px;
+        }
+
+        .memes-container img {
+            width: 90%;
+            max-width: 350px;
+            border-radius: 20px;
+            border: 3px solid #222;
+            transition: 0.3s;
+        }
+
+        .memes-container img:hover { transform: scale(1.02); border-color: var(--blue); }
+
+        #cooldown-text { 
+            color: #ff4444; 
+            font-size: 14px; 
+            margin-bottom: 5px;
+            font-weight: bold;
         }
     </style>
 </head>
 <body>
 
     <div id="disclaimer">
-        <h1>ВНИМАНИЕ</h1>
-        <p>Вход в казино симулятор</p>
-        <button class="accept-btn" onclick="acceptDisclaimer()">ПРИНЯТЬ</button>
+        <h1 style="color:var(--gold)">ДИСКЛЕЙМЕР</h1>
+        <p style="text-align:center; padding: 0 20px;">Входя на сайт, вы соглашаетесь с правилами симулятора казино.</p>
+        <button onclick="acceptDisclaimer()" style="background:var(--gold); padding:15px 50px; border:none; border-radius:30px; font-weight:bold; cursor:pointer;">ПРИНЯТЬ</button>
     </div>
 
     <div class="header-links">
-        <a href="https://t.me/Logovo_bomja_fugu" class="square-btn">НОВОСТИ</a>
-        <a href="https://t.me/cherebuhh_tv" class="square-btn">ДРУГ</a>
+        <a href="https://t.me/Logovo_bomja_fugu" class="square-btn">📢 НОВОСТИ</a>
+        <a href="https://t.me/cherebuhh_tv" class="square-btn">🤝 ДРУГ</a>
     </div>
 
-    <div class="clicker-section">
-        <div id="balance" style="font-size: 40px; color: var(--gold);">0</div>
-        <div class="main-coin" id="coin" onclick="handleTap()">🐡</div>
+    <div class="balance-container">
+        <div style="font-size: 14px; opacity: 0.5;">ТВОЙ БАЛАНС</div>
+        <div id="balance">0</div>
+    </div>
+
+    <div class="main-coin" onclick="handleTap()">🐡</div>
+
+    <div class="casino-section">
         <div id="cooldown-text"></div>
+        <div class="slot-display" id="slots">🦆 🐡 7</div>
+        <button class="casino-btn" id="casino-btn" onclick="playCasino()">ИГРАТЬ (ДЕП 50)</button>
     </div>
 
-    <div class="slot-display" id="slots">🦆 🐡 7</div>
-
-    <div class="bottom-ui">
+    <div class="ui-grid">
         <div class="ui-box">
-            <div style="font-size: 12px;">МАГАЗИН</div>
-            <button class="shop-btn" onclick="buyUpgrade()" id="upg-btn">+5 к клику (1000)</button>
+            <div style="font-size: 12px; color:var(--blue)">МАГАЗИН</div>
+            <button style="width:100%; margin-top:10px; border-radius:8px; border:1px solid var(--blue); background:none; color:white; cursor:pointer;" onclick="buyUpgrade()">+10 Клик (1500)</button>
         </div>
         <div class="ui-box">
-            <div style="font-size: 12px;">ТОП</div>
-            <div style="font-size: 12px; margin-top:5px;">
+            <div style="font-size: 12px; color:var(--gold)">ТОП</div>
+            <div style="font-size: 11px; margin-top:8px;">
                 1. Дуров: ∞ <br>
                 2. Ты: <span id="top-val">0</span>
             </div>
         </div>
     </div>
 
-    <div class="memes">
+    <div class="memes-container">
         <img src="IMG_20260101_145923_474.jpg">
         <img src="IMG_20260101_145902_173.jpg">
         <img src="IMG_20260101_145849_625.jpg">
@@ -188,40 +233,60 @@
     <script>
         let balance = parseInt(localStorage.getItem('fugu_balance')) || 0;
         let clickValue = parseInt(localStorage.getItem('fugu_click')) || 5;
-        let canClick = false;
+        let canPlay = false;
         const symbols = ['🦆', '🐡', '💎', '💩', '7'];
 
         updateUI();
 
         function acceptDisclaimer() {
             document.getElementById('disclaimer').style.display = 'none';
-            startCooldown(10000, "ЗАГРУЗКА 10с");
+            startCooldown(10000);
         }
 
-        function startCooldown(ms, msg) {
-            canClick = false;
-            const coin = document.getElementById('coin');
+        function startCooldown(ms) {
+            canPlay = false;
+            const btn = document.getElementById('casino-btn');
             const status = document.getElementById('cooldown-text');
-            coin.classList.add('disabled');
-            status.innerText = msg;
-            setTimeout(() => {
-                canClick = true;
-                coin.classList.remove('disabled');
-                status.innerText = "";
-            }, ms);
+            btn.classList.add('disabled');
+            
+            let timeLeft = ms/1000;
+            let timer = setInterval(() => {
+                status.innerText = "ЗАРЯДКА: " + timeLeft.toFixed(1) + "s";
+                timeLeft -= 0.1;
+                if(timeLeft <= 0) {
+                    clearInterval(timer);
+                    canPlay = true;
+                    btn.classList.remove('disabled');
+                    status.innerText = "";
+                }
+            }, 100);
         }
 
         function handleTap() {
-            if (!canClick) return;
             balance += clickValue;
+            updateUI();
+            saveData();
+        }
+
+        function playCasino() {
+            if (!canPlay || balance < 50) {
+                if(balance < 50) alert("Нужно минимум 50 монет!");
+                return;
+            }
+            
+            balance -= 50;
             let s = [
                 symbols[Math.floor(Math.random() * symbols.length)],
                 symbols[Math.floor(Math.random() * symbols.length)],
                 symbols[Math.floor(Math.random() * symbols.length)]
             ];
+            
             document.getElementById('slots').innerText = s.join(' ');
+            document.getElementById('slots').style.animation = "shake 0.3s";
+            setTimeout(() => { document.getElementById('slots').style.animation = ""; }, 300);
+
             if (s.includes('💩')) {
-                balance -= 20;
+                balance = Math.floor(balance * 0.7);
             } else {
                 if (s[0] === s[1] && s[1] === s[2]) {
                     if (s[0] === '🐡' || s[0] === '7') balance *= 3;
@@ -232,16 +297,17 @@
                     else balance *= 1.5;
                 }
             }
+
             balance = Math.floor(balance);
-            saveData();
             updateUI();
-            startCooldown(3000, "ОЖИДАНИЕ 3с");
+            saveData();
+            startCooldown(3000);
         }
 
         function buyUpgrade() {
-            if (balance >= 1000) {
-                balance -= 1000;
-                clickValue += 5;
+            if (balance >= 1500) {
+                balance -= 1500;
+                clickValue += 10;
                 saveData();
                 updateUI();
             }
