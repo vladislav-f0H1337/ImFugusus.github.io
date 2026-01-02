@@ -3,114 +3,524 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fugu Hub</title>
+    <title>Fugu Casino Simulator</title>
     <style>
-        :root { --bg: #0f0f0f; --card-bg: #1a1a1a; --accent: #00f2ff; }
-        body { font-family: sans-serif; background-color: var(--bg); color: white; margin: 0; display: flex; flex-direction: column; align-items: center; padding: 20px; }
-        .container { width: 100%; max-width: 400px; text-align: center; }
-        .game-section { background: var(--card-bg); padding: 20px; border-radius: 20px; border: 1px solid #333; margin-top: 20px; }
-        .balance { font-size: 1.2rem; margin-bottom: 10px; }
-        .balance span { color: var(--accent); font-weight: bold; }
-        .clicker-btn { background: var(--accent); color: black; border: none; padding: 15px 30px; border-radius: 50px; font-weight: bold; cursor: pointer; width: 100%; margin-bottom: 20px; }
-        .slots { display: flex; justify-content: center; gap: 10px; font-size: 2.5rem; margin: 15px 0; background: #000; padding: 15px; border-radius: 15px; border: 2px solid #222; }
-        .bet-btn { background: #ff9900; color: white; border: none; padding: 15px; border-radius: 12px; cursor: pointer; width: 100%; font-weight: bold; }
-        .bet-btn:disabled { background: #222; color: #555; cursor: not-allowed; }
-        .leaderboard { margin-top: 25px; background: #111; border-radius: 15px; padding: 15px; border: 1px solid #333; }
-        .leader-item { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #222; }
+        :root {
+            --bg-color: #121212;
+            --text-color: #e0e0e0;
+            --accent-color: #ffd700;
+            --danger-color: #ff4444;
+            --secondary-bg: #1e1e1e;
+            --border-radius: 12px;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            user-select: none; 
+        }
+
+        button {
+            cursor: pointer;
+            border: none;
+            outline: none;
+            transition: transform 0.1s;
+        }
+        button:active { transform: scale(0.95); }
+
+        .hidden { display: none !important; }
+
+        .container {
+            width: 100%;
+            max-width: 600px;
+            padding: 20px;
+            box-sizing: border-box;
+            text-align: center;
+            padding-bottom: 100px;
+        }
+
+        #overlay, #banned-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: #000;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            box-sizing: border-box;
+            text-align: center;
+        }
+
+        .disclaimer-box {
+            background: var(--secondary-bg);
+            padding: 25px;
+            border-radius: var(--border-radius);
+            border: 2px solid var(--danger-color);
+            max-width: 450px;
+            text-align: left;
+            font-size: 0.9rem;
+            box-shadow: 0 0 30px rgba(255, 68, 68, 0.2);
+        }
+
+        .disclaimer-box h2 {
+            color: var(--danger-color);
+            text-align: center;
+            margin-top: 0;
+        }
+
+        .legal-text {
+            color: #aaa;
+            margin-bottom: 15px;
+            font-size: 0.8rem;
+            line-height: 1.4;
+        }
+
+        .input-nick {
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid #555;
+            background: #333;
+            color: #fff;
+            margin-bottom: 15px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .btn-accept {
+            background: var(--accent-color);
+            color: #000;
+            padding: 12px 20px;
+            font-weight: bold;
+            border-radius: 8px;
+            font-size: 16px;
+            width: 100%;
+            text-transform: uppercase;
+        }
+
+        header {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            background: var(--secondary-bg);
+            padding: 15px;
+            border-radius: var(--border-radius);
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+            gap: 5px;
+        }
+        
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+        }
+
+        .stats { font-size: 1.2rem; font-weight: bold; }
+        .money { color: var(--accent-color); }
+        
+        .timer-bar {
+            width: 100%;
+            background: #333;
+            height: 6px;
+            border-radius: 3px;
+            overflow: hidden;
+            margin-top: 10px;
+        }
+        .timer-fill {
+            height: 100%;
+            background: var(--danger-color);
+            width: 100%;
+            transition: width 1s linear;
+        }
+        .session-info {
+            font-size: 0.8rem;
+            color: #777;
+            text-align: center;
+        }
+
+        .links-container {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .link-box {
+            flex: 1;
+            aspect-ratio: 1/1;
+            background: #2a2a2a;
+            border-radius: var(--border-radius);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-decoration: none;
+            color: #fff;
+            font-weight: bold;
+            border: 2px solid #333;
+            transition: 0.3s;
+            position: relative;
+        }
+        .link-box:hover { border-color: var(--accent-color); background: #333; }
+        
+        .clicker-area { margin: 30px 0; }
+        .coin-btn {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            background: radial-gradient(circle, #ffd700 0%, #b8860b 100%);
+            border: 5px solid #fff;
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.4);
+            font-size: 2rem;
+            color: #4a3b00;
+            font-weight: 900;
+            display: block;
+            margin: 0 auto;
+        }
+
+        .slots-container {
+            background: var(--secondary-bg);
+            padding: 20px;
+            border-radius: var(--border-radius);
+            margin-bottom: 20px;
+        }
+        .slot-machine {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            font-size: 3rem;
+            margin: 20px 0;
+            background: #000;
+            padding: 10px;
+            border-radius: 8px;
+        }
+        .bet-input {
+            width: 60px;
+            padding: 5px;
+            background: #333;
+            color: #fff;
+            border: 1px solid #555;
+            text-align: center;
+        }
+
+        .maze-menu { display: flex; flex-direction: column; gap: 10px; }
+        .maze-btn { padding: 15px; border-radius: 8px; color: white; font-weight: bold; }
+        .btn-easy { background: #4caf50; }
+        .btn-norm { background: #2196f3; }
+        .btn-hard { background: #f44336; }
+
+        #maze-canvas { background: #eee; margin: 0 auto; display: block; border-radius: 4px; }
+        .maze-controls {
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px;
+            width: 150px; margin: 10px auto;
+        }
+        .maze-ctrl-btn { padding: 15px; background: #444; color: white; border-radius: 5px; }
+
+        .panel {
+            background: var(--secondary-bg);
+            padding: 15px;
+            border-radius: var(--border-radius);
+            margin-bottom: 20px;
+            text-align: left;
+        }
+        .shop-item, .player-row {
+            display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #333;
+        }
+        .buy-btn {
+            background: var(--accent-color); color: #000; padding: 5px 10px; border-radius: 4px; font-size: 0.9rem;
+        }
+
+        .meme-gallery {
+            display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-top: 30px;
+        }
+        .meme-img {
+            width: 45%; max-width: 150px; border-radius: 8px; border: 1px solid #333; object-fit: cover;
+        }
+
+        .nav-tabs {
+            display: flex; justify-content: space-around; margin-bottom: 20px;
+            background: #252525; padding: 5px; border-radius: 20px;
+        }
+        .tab-btn {
+            background: transparent; color: #888; padding: 10px; font-weight: bold; flex: 1;
+        }
+        .tab-btn.active { background: #444; color: #fff; border-radius: 15px; }
+
     </style>
 </head>
 <body>
 
-    <div class="container">
-        <div style="margin-bottom:15px;">Игрок: <b id="user-display">Загрузка...</b></div>
-
-        <div class="game-section">
-            <div class="balance">Баланс: <span id="coins">0</span> 💰</div>
-            <button class="clicker-btn" onclick="addCoin()">ТАПАТЬ</button>
-            <div class="slots" id="slot-display">🎰 🎰 🎰</div>
-            <button class="bet-btn" onclick="playSlots()" id="bet-btn">Депнуть 10</button>
+    <div id="overlay">
+        <div id="disclaimer" class="disclaimer-box">
+            <h2>🔞 STROGO 18+</h2>
+            <div class="legal-text">
+                <p><strong>Пользовательское соглашение:</strong></p>
+                <p>1. Данный сайт является <strong>симулятором</strong> (игрой). Все монеты — виртуальные фантики. Ввод и вывод реальных денег <strong>НЕВОЗМОЖЕН</strong>.</p>
+                <p>2. Играя здесь, вы подтверждаете, что вам исполнилось 18 лет.</p>
+                <p>3. Администрация не несет ответственности за потраченное время.</p>
+                <p>4. <strong>ОГРАНИЧЕНИЕ:</strong> В целях борьбы с игровой зависимостью, время сессии ограничено 15 минутами. После этого доступ будет заблокирован.</p>
+            </div>
+            <input type="text" id="nicknameInput" class="input-nick" placeholder="Придумайте Никнейм" maxlength="12">
+            <button class="btn-accept" onclick="acceptDisclaimer()">Я всё понял, мне есть 18+</button>
         </div>
 
-        <div class="leaderboard">
-            <h3 style="margin:0 0 10px 0; color:var(--accent);">🏆 Топ игроков</h3>
-            <div id="leader-list"></div>
+        <div id="loader" class="hidden">
+            <h2>⚡ ПОДКЛЮЧЕНИЕ...</h2>
+            <p>Проверка безопасности... <span id="loadTimer">10</span> сек.</p>
+        </div>
+    </div>
+
+    <div id="banned-overlay" class="hidden">
+        <h1 style="color: red; font-size: 3rem;">⛔ СТОП ⛔</h1>
+        <h2>Время вышло!</h2>
+        <p>Вы провели в игре 15 минут.</p>
+        <p>Согласно правилам безопасной игры, сессия окончена.</p>
+        <p>Иди гуляй а то занимаешься всякой хуйней.</p>
+        <br>
+        <p style="color: #555;">(Обновите страницу позже, если очень хочется лудоман блять)</p>
+    </div>
+
+    <div class="container hidden" id="mainApp">
+
+        <header>
+            <div class="header-top">
+                <div id="playerNick">Игрок</div>
+                <div class="stats">💰 <span id="coinCount" class="money">0</span></div>
+            </div>
+            <div class="session-info">До конца сессии: <span id="timeLeft">15:00</span></div>
+            <div class="timer-bar"><div class="timer-fill" id="timerFill"></div></div>
+        </header>
+
+        <div class="links-container">
+            <a href="https://t.me/Logovo_bomja_fugu" target="_blank" class="link-box">НОВОСТИ<br>(Fugu)</a>
+            <a href="https://t.me/cherebuhh_tv" target="_blank" class="link-box">ДРУГ<br>(твич)</a>
+        </div>
+        
+        <nav class="nav-tabs">
+            <button class="tab-btn active" onclick="switchTab('clicker')">Кликер</button>
+            <button class="tab-btn" onclick="switchTab('slots')">Слоты</button>
+            <button class="tab-btn" onclick="switchTab('maze')">Лабиринт</button>
+            <button class="tab-btn" onclick="switchTab('shop')">Магазин</button>
+            <button class="tab-btn" onclick="switchTab('top')">Топ</button>
+        </nav>
+
+
+        <div id="tab-clicker" class="tab-content">
+            <div class="clicker-area">
+                <button class="coin-btn" onclick="clickCoin()">TAP</button>
+            </div>
+        </div>
+
+        <div id="tab-slots" class="tab-content hidden">
+            <div class="slots-container">
+                <h3>Слоты Fugu</h3>
+                <div class="slot-machine" id="slotDisplay">
+                    <span>🍒</span><span>🍒</span><span>🍒</span>
+                </div>
+                <p id="slotResult">Сделайте ставку!</p>
+                <div style="margin-top:10px;">
+                    Ставка: <input type="number" id="betAmount" class="bet-input" value="100">
+                    <button class="btn-accept" style="width: auto; padding: 5px 15px;" id="spinBtn" onclick="spinSlots()">КРУТИТЬ</button>
+                </div>
+                <div style="font-size: 0.8rem; margin-top: 10px; color: #888;">
+                    3x🐡=x3 | 3x7️⃣=x3 | 3x🦆=x1.3<br>
+                    2x7️⃣+любой(не💩)=x2 | 2xОдинаковых=x1.5 | 💩=ПОТЕРЯ
+                </div>
+            </div>
+        </div>
+
+        <div id="tab-maze" class="tab-content hidden">
+            <div id="mazeMenu" class="maze-menu">
+                <h3>Выберите сложность</h3>
+                <button class="maze-btn btn-easy" onclick="startMaze('easy')">ЛЕГКО (727 💰)</button>
+                <button class="maze-btn btn-norm" onclick="startMaze('normal')">НОРМА (3444 💰)</button>
+                <button class="maze-btn btn-hard" onclick="startMaze('hard')">ХАРД (2200 💰)</button>
+            </div>
+            <div id="mazeGame" class="hidden">
+                <canvas id="maze-canvas" width="300" height="300"></canvas>
+                <div class="maze-controls">
+                    <div></div>
+                    <button class="maze-ctrl-btn" onclick="moveMaze(0, -1)">⬆️</button>
+                    <div></div>
+                    <button class="maze-ctrl-btn" onclick="moveMaze(-1, 0)">⬅️</button>
+                    <button class="maze-ctrl-btn" onclick="exitMaze()">❌</button>
+                    <button class="maze-ctrl-btn" onclick="moveMaze(1, 0)">➡️</button>
+                    <div></div>
+                    <button class="maze-ctrl-btn" onclick="moveMaze(0, 1)">⬇️</button>
+                    <div></div>
+                </div>
+            </div>
+        </div>
+
+        <div id="tab-shop" class="tab-content hidden">
+            <div class="panel">
+                <h3>Магазин</h3>
+                <div class="shop-item">
+                    <span>Сила клика +1</span>
+                    <button class="buy-btn" onclick="buyUpgrade('click', 100)">100 💰</button>
+                </div>
+                <div class="shop-item">
+                    <span>Сила клика +5</span>
+                    <button class="buy-btn" onclick="buyUpgrade('click5', 450)">450 💰</button>
+                </div>
+                 <div class="shop-item">
+                    <span>Лицензия игрока (Декор)</span>
+                    <button class="buy-btn" onclick="buyUpgrade('luck', 5000)">5000 💰</button>
+                </div>
+            </div>
+        </div>
+        
+        <div id="tab-top" class="tab-content hidden">
+            <div class="panel">
+                <h3>Топ Богачей</h3>
+                <div id="leaderboardList">
+                </div>
+            </div>
+        </div>
+
+        <div class="meme-gallery">
+            <img src="IMG_20260101_145923_474.jpg" alt="Meme" class="meme-img">
+            <img src="IMG_20260101_145902_173.jpg" alt="Meme" class="meme-img">
+            <img src="IMG_20260101_145849_625.jpg" alt="Meme" class="meme-img">
+            <img src="IMG_20260101_151706_375.jpg" alt="Meme" class="meme-img">
+            <img src="IMG_20260101_151704_265.jpg" alt="Meme" class="meme-img">
         </div>
     </div>
 
     <script>
-        // Загрузка или создание анонимного ника
-        let userName = localStorage.getItem('fugu_user');
-        if (!userName) {
-            userName = "User " + Math.floor(Math.random() * 1000);
-            localStorage.setItem('fugu_user', userName);
-        }
 
-        let coins = localStorage.getItem('fugu_coins') ? parseInt(localStorage.getItem('fugu_coins')) : 0;
-        let isCooldown = false;
+        const MAX_SESSION_TIME = 15 * 60;
+        let sessionTimer = MAX_SESSION_TIME;
+        let timerInterval = null;
 
-        function updateDisplay() {
-            document.getElementById('coins').innerText = coins;
-            document.getElementById('user-display').innerText = userName;
-            const btn = document.getElementById('bet-btn');
-            if (!isCooldown) {
-                btn.disabled = coins < 10;
-                btn.innerText = "Депнуть 10";
+        let state = {
+            coins: 0,
+            nickname: "Anon",
+            clickPower: 5,
+            lastSlotTime: 0,
+            mazeReward: 0
+        };
+
+        function loadGame() {
+            const saved = localStorage.getItem('fuguSave');
+            if (saved) {
+                const parsed = JSON.parse(saved);
+                state = { ...state, ...parsed };
             }
-            updateLeaderboard();
+            updateUI();
+            startSessionTimer();
         }
 
-        function updateLeaderboard() {
-            const leaders = [
-                {n: "Fugu_King", c: 50000},
-                {n: "SlotMaster", c: 25000},
-                {n: userName, c: coins},
-                {n: "User 123", c: 800},
-                {n: "User 999", c: 300}
-            ].sort((a, b) => b.c - a.c);
-
-            document.getElementById('leader-list').innerHTML = leaders.map((l, i) => `
-                <div class="leader-item">
-                    <span>${i+1}. ${l.n}</span>
-                    <span style="color:gold">${l.c} 💰</span>
-                </div>
-            `).join('');
+        function saveGame() {
+            localStorage.setItem('fuguSave', JSON.stringify(state));
+            updateUI();
         }
 
-        function addCoin() { coins++; save(); updateDisplay(); }
+        function updateUI() {
+            document.getElementById('coinCount').innerText = Math.floor(state.coins);
+            document.getElementById('playerNick').innerText = state.nickname;
+            generateLeaderboard();
+        }
 
-        function playSlots() {
-            if (coins < 10 || isCooldown) return;
-            coins -= 10;
-            isCooldown = true;
+        function startSessionTimer() {
+            const timeDisplay = document.getElementById('timeLeft');
+            const fillBar = document.getElementById('timerFill');
             
-            const btn = document.getElementById('bet-btn');
-            let timer = 3; 
-            
-            const interval = setInterval(() => {
-                btn.disabled = true;
-                btn.innerText = `Жди ${timer} сек...`;
-                timer--;
-                if (timer < 0) {
-                    clearInterval(interval);
-                    isCooldown = false;
-                    updateDisplay();
+            timerInterval = setInterval(() => {
+                sessionTimer--;
+                
+                let m = Math.floor(sessionTimer / 60);
+                let s = sessionTimer % 60;
+                timeDisplay.innerText = `${m}:${s < 10 ? '0'+s : s}`;
+                
+                let pct = (sessionTimer / MAX_SESSION_TIME) * 100;
+                fillBar.style.width = pct + "%";
+
+                if (sessionTimer <= 0) {
+                    endSession();
                 }
             }, 1000);
-
-            const symbols = ['🐡', '🦆', '💎', '7️⃣'];
-            const s = () => symbols[Math.floor(Math.random() * symbols.length)];
-            const r1 = s(), r2 = s(), r3 = s();
-            document.getElementById('slot-display').innerText = `${r1} ${r2} ${r3}`;
-
-            if (r1 === r2 && r2 === r3) { coins += 1000; } 
-            else if (r1 === r2 || r2 === r3 || r1 === r3) { coins += 15; }
-
-            save();
-            updateDisplay();
         }
 
-        function save() { localStorage.setItem('fugu_coins', coins); }
-        updateDisplay();
-    </script>
-</body>
-</html>
+        function endSession() {
+            clearInterval(timerInterval);
+            document.getElementById('mainApp').classList.add('hidden');
+            document.getElementById('banned-overlay').classList.remove('hidden')
+            sessionTimer = 0;
+        }
+
+        function acceptDisclaimer() {
+            const nickInput = document.getElementById('nicknameInput').value;
+            if(nickInput.trim() === "") {
+                alert("Введите никнейм!");
+                return;
+            }
+            state.nickname = nickInput;
+            
+            document.getElementById('disclaimer').classList.add('hidden');
+            document.getElementById('loader').classList.remove('hidden');
+            
+            let timeLeft = 10;
+            const timerEl = document.getElementById('loadTimer');
+            const interval = setInterval(() => {
+                timeLeft--;
+                timerEl.innerText = timeLeft;
+                if(timeLeft <= 0) {
+                    clearInterval(interval);
+                    document.getElementById('overlay').style.display = 'none';
+                    document.getElementById('mainApp').classList.remove('hidden');
+                    loadGame();
+                }
+            }, 1000);
+        }
+
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.getElementById(`tab-${tabName}`).classList.remove('hidden');
+            
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+        }
+
+        function clickCoin() {
+            state.coins += state.clickPower;
+            saveGame();
+        }
+
+        function buyUpgrade(type, cost) {
+            if(state.coins >= cost) {
+                state.coins -= cost;
+                if(type === 'click') state.clickPower += 1;
+                if(type === 'click5') state.clickPower += 5;
+                alert("Успешно куплено!");
+                saveGame();
+            } else {
+                alert("Не хватает монет!");
+            }
+        }
+
+        const symbols = ['🦆', '🐡', '💎', '💩', '7️⃣'];
+
+        function spinSlots() {
+            const now = Date.now();
+            if(now - state.lastSlotTime < 3000) {
+                alert("Подождите 3 секунды (Остывание)");
+                return;
+            }
+
+            const bet = parseInt(document.getElementById('betAmount').value);
+            if(isNaN(bet) || bet <= 0) { alert("Неверная ставка"); return; }
+            if(state.coins < bet) { alert("Ты бомж, у тебя мало денег"); return; }
+
+            state.coins -= bet;
+            state.lastSlotTime = now;
+
+            const display
