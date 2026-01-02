@@ -3,173 +3,166 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Fugu Game Pro</title>
+    <title>Fugu Ultra Hardcore</title>
     <style>
-        :root { --gold: #ffcc00; --blue: #0088cc; --bg: #0a0a0a; --card: #161616; --neon: #00ffcc; }
-        body { background: var(--bg); color: white; font-family: sans-serif; margin: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; touch-action: manipulation; }
+        :root { --gold: #ffcc00; --blue: #0088cc; --bg: #0a0a0a; --card: #161616; --neon: #00ffcc; --red: #ff4444; }
+        body { background: var(--bg); color: white; font-family: sans-serif; margin: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; touch-action: none; overflow-x: hidden; }
         
-        #disclaimer { position: fixed; inset: 0; background: rgba(0,0,0,0.98); display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 2000; text-align: center; }
-        .nick-input { padding: 12px; border-radius: 10px; border: 2px solid var(--blue); background: #000; color: white; margin-bottom: 15px; width: 200px; }
+        #disclaimer { position: fixed; inset: 0; background: rgba(0,0,0,0.98); display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 2000; }
         
-        .header-links { display: flex; gap: 10px; margin-top: 15px; }
-        .square-btn { width: 75px; height: 75px; background: var(--card); border: 2px solid #333; border-radius: 12px; display: flex; justify-content: center; align-items: center; text-decoration: none; color: white; font-size: 10px; text-align: center; }
+        .balance-box { text-align: center; margin: 20px 0; }
+        #balance { font-size: 50px; color: var(--gold); font-weight: 900; text-shadow: 0 0 15px rgba(255,204,0,0.3); }
 
-        .balance-box { text-align: center; margin: 15px 0; }
-        #balance { font-size: 45px; color: var(--gold); font-weight: 900; }
+        .game-card { background: var(--card); border-radius: 20px; border: 1px solid #333; width: 92%; max-width: 380px; padding: 15px; margin-bottom: 15px; text-align: center; }
 
-        .main-coin { width: 130px; height: 130px; background: radial-gradient(circle, #ffe082, #fbc02d); border-radius: 50%; border: 5px solid var(--gold); display: flex; justify-content: center; align-items: center; font-size: 60px; cursor: pointer; user-select: none; margin: 10px auto; }
+        #maze-container { width: 300px; height: 300px; background: #000; position: relative; margin: 10px auto; border: 3px solid #444; overflow: hidden; display: none; }
+        .maze-wall { position: absolute; background: #444; }
+        .moving-wall { position: absolute; background: var(--red); box-shadow: 0 0 10px var(--red); }
+        #maze-player { position: absolute; width: 16px; height: 16px; background: var(--neon); border-radius: 50%; z-index: 100; pointer-events: none; box-shadow: 0 0 10px var(--neon); }
+        #maze-target { position: absolute; width: 35px; height: 35px; background: var(--gold); right: 5px; bottom: 5px; display: flex; justify-content: center; align-items: center; border-radius: 5px; font-size: 20px; }
 
-        .game-card { background: var(--card); border-radius: 20px; border: 1px solid #333; width: 90%; max-width: 380px; padding: 15px; margin-bottom: 15px; text-align: center; position: relative; }
+        #fishing-zone { width: 100%; height: 120px; background: linear-gradient(to bottom, #001a33, #003366); border-radius: 15px; position: relative; margin-top: 10px; display: none; overflow: hidden; border: 2px solid var(--blue); }
+        .fish { position: absolute; cursor: pointer; user-select: none; font-size: 24px; transition: transform 0.1s; z-index: 10; padding: 10px; }
+
+        .btn { background: var(--blue); color: white; border: none; padding: 14px; border-radius: 12px; width: 100%; font-weight: bold; cursor: pointer; font-size: 16px; }
+        .btn:active { transform: scale(0.98); }
         
-        /* Лабиринт */
-        #maze-container { width: 250px; height: 250px; background: #000; position: relative; margin: 10px auto; border: 2px solid #444; overflow: hidden; display: none; touch-action: none; }
-        .maze-wall { position: absolute; background: #333; }
-        #maze-player { position: absolute; width: 20px; height: 20px; background: var(--neon); border-radius: 50%; z-index: 10; pointer-events: none; }
-        #maze-target { position: absolute; width: 30px; height: 30px; background: var(--gold); right: 5px; bottom: 5px; display: flex; justify-content: center; align-items: center; border-radius: 5px; }
-
-        /* Рыбалка */
-        #fishing-zone { width: 100%; height: 60px; background: #001a33; border-radius: 30px; position: relative; margin-top: 10px; display: none; overflow: hidden; border: 1px solid var(--blue); }
-        #fish-target { position: absolute; font-size: 25px; top: 15px; cursor: pointer; transition: 0.1s; user-select: none; }
-
-        .btn { background: var(--blue); color: white; border: none; padding: 12px; border-radius: 12px; width: 100%; font-weight: bold; cursor: pointer; margin-top: 5px; }
-        .memes-container { display: flex; flex-direction: column; gap: 15px; width: 100%; align-items: center; padding-bottom: 60px; }
-        .memes-container img { width: 90%; max-width: 350px; border-radius: 15px; }
+        .stats { font-size: 12px; display: flex; justify-content: space-between; margin-bottom: 5px; opacity: 0.8; }
     </style>
 </head>
 <body>
 
-    <div id="disclaimer">
-        <h1>FUGU CASINO</h1>
-        <input type="text" id="nickname-input" class="nick-input" placeholder="Никнейм..." maxlength="12">
-        <button onclick="saveNickAndStart()" style="padding:15px 40px; border-radius:20px; background:var(--gold); border:none; font-weight:bold;">ИГРАТЬ</button>
-    </div>
-
-    <div class="header-links">
-        <a href="https://t.me/Logovo_bomja_fugu" class="square-btn">📢 НОВОСТИ</a>
-        <a href="https://t.me/cherebuhh_tv" class="square-btn">🤝 ДРУГ</a>
+    <div id="disclaimer" style="display: none;">
+        <h1 style="color:var(--gold)">FUGU WORLD</h1>
+        <button onclick="document.getElementById('disclaimer').style.display='none'" class="btn" style="width:200px">ВОЙТИ</button>
     </div>
 
     <div class="balance-box">
-        <div id="user-nick-display" style="color:var(--blue)">Игрок</div>
+        <div style="font-size: 12px; color: var(--blue); letter-spacing: 2px;">БАЛАНС</div>
         <div id="balance">0</div>
-    </div>
-
-    <div class="main-coin" onclick="tap()">🐡</div>
-
-    <div class="game-card">
-        <div style="font-size: 12px;">🏆 ТОП 1: Павел Дуров (∞)</div>
-        <div style="font-size: 12px;">🏆 ТОП 2: <span id="top-nick">Ты</span> (<span id="top-bal">0</span>)</div>
+        <div style="font-size: 12px; opacity: 0.6;">Ник: <span id="u-nick">FuguSUS</span></div>
     </div>
 
     <div class="game-card">
-        <div style="font-size: 14px; font-weight: bold;">🌀 ХАРД ЛАБИРИНТ (2200)</div>
-        <p style="font-size: 10px; opacity: 0.7;">Зажми палец на кружке и веди к выходу!</p>
-        <button class="btn" onclick="initMaze()">ВОЙТИ</button>
+        <div class="stats"><span>УРОВЕНЬ: ХАРДКОР</span> <span>НАГРАДА: 5000</span></div>
+        <button class="btn" onclick="initMaze()">ЗАПУСТИТЬ ЛАБИРИНТ</button>
         <div id="maze-container">
             <div id="maze-player"></div>
             <div id="maze-target">🎁</div>
-            <div class="maze-wall" style="top:50px; left:0; width:200px; height:20px;"></div>
-            <div class="maze-wall" style="top:100px; left:50px; width:200px; height:20px;"></div>
-            <div class="maze-wall" style="top:150px; left:0; width:200px; height:20px;"></div>
-            <div class="maze-wall" style="top:200px; left:50px; width:200px; height:20px;"></div>
+            <div class="maze-wall" style="top:60px; left:0; width:240px; height:15px;"></div>
+            <div class="maze-wall" style="top:120px; left:60px; width:240px; height:15px;"></div>
+            <div class="maze-wall" style="top:180px; left:0; width:240px; height:15px;"></div>
+            <div class="maze-wall" style="top:240px; left:60px; width:240px; height:15px;"></div>
+            <div id="m-wall-1" class="moving-wall" style="top:75px; left:100px; width:15px; height:45px;"></div>
+            <div id="m-wall-2" class="moving-wall" style="top:135px; left:180px; width:15px; height:45px;"></div>
         </div>
     </div>
 
     <div class="game-card">
-        <div style="font-size: 14px; font-weight: bold;">🎣 РЫБАЛКА (150)</div>
-        <button class="btn" onclick="startFishing()">ЗАБРОСИТЬ УДОЧКУ</button>
-        <div id="fishing-zone">
-            <div id="fish-target" onclick="catchFish()">🐡</div>
-        </div>
-    </div>
-
-    <div class="memes-container">
-        <img src="IMG_20260101_145923_474.jpg">
-        <img src="IMG_20260101_145902_173.jpg">
-        <img src="IMG_20260101_145849_625.jpg">
-        <img src="IMG_20260101_151706_375.jpg">
-        <img src="IMG_20260101_151704_265.jpg">
+        <div class="stats"><span>МНОГО РЫБ</span> <span>ОБЫЧНАЯ: 150 | ЗОЛОТАЯ: 1000</span></div>
+        <button class="btn" onclick="startFishing()">НАЧАТЬ РЫБАЛКУ</button>
+        <div id="fishing-zone"></div>
     </div>
 
     <script>
         let balance = parseInt(localStorage.getItem('fugu_bal')) || 0;
-        let nickname = localStorage.getItem('fugu_nick') || "";
-        
-        function saveNickAndStart() {
-            nickname = document.getElementById('nickname-input').value.trim() || "Аноним";
-            localStorage.setItem('fugu_nick', nickname);
-            location.reload();
-        }
-
-        if(nickname) {
-            document.getElementById('disclaimer').style.display = 'none';
-            document.getElementById('user-nick-display').innerText = nickname;
-            document.getElementById('top-nick').innerText = nickname;
-        }
-
-        function tap() { balance += 5; update(); }
+        let nickname = localStorage.getItem('fugu_nick') || "FuguSUS";
+        document.getElementById('u-nick').innerText = nickname;
 
         let isDragging = false;
+        let wallPos = 0;
+        let wallDir = 2;
+
         function initMaze() {
             const container = document.getElementById('maze-container');
             const player = document.getElementById('maze-player');
             container.style.display = 'block';
-            player.style.top = "5px"; player.style.left = "5px";
-            
-            const handleMove = (e) => {
+            player.style.top = "10px"; player.style.left = "10px";
+
+            if(!window.mazeInt) {
+                window.mazeInt = setInterval(() => {
+                    wallPos += wallDir;
+                    if(wallPos > 150 || wallPos < 0) wallDir *= -1;
+                    document.getElementById('m-wall-1').style.left = (50 + wallPos) + "px";
+                    document.getElementById('m-wall-2').style.left = (250 - wallPos) + "px";
+                }, 20);
+            }
+
+            const move = (e) => {
                 if(!isDragging) return;
                 const rect = container.getBoundingClientRect();
-                const touch = e.touches ? e.touches[0] : e;
-                let x = touch.clientX - rect.left - 10;
-                let y = touch.clientY - rect.top - 10;
-                
+                const t = e.touches ? e.touches[0] : e;
+                let x = t.clientX - rect.left - 8;
+                let y = t.clientY - rect.top - 8;
+
                 player.style.left = x + "px";
                 player.style.top = y + "px";
 
-                if(x > 215 && y > 215) { winMaze(); isDragging = false; }
-                
-                let elem = document.elementFromPoint(touch.clientX, touch.clientY);
-                if(elem && elem.classList.contains('maze-wall')) {
-                    isDragging = false; alert("Врезался! Попробуй снова.");
-                    player.style.top = "5px"; player.style.left = "5px";
+                if(x > 260 && y > 260) {
+                    alert("НЕВЕРОЯТНО! +5000");
+                    balance += 5000;
+                    isDragging = false;
+                    container.style.display = 'none';
+                    update();
+                }
+
+                let hit = document.elementFromPoint(t.clientX, t.clientY);
+                if(hit && (hit.classList.contains('maze-wall') || hit.classList.contains('moving-wall'))) {
+                    isDragging = false;
+                    alert("СМЕРТЬ! Попробуй еще раз.");
+                    player.style.top = "10px"; player.style.left = "10px";
                 }
             };
 
-            container.onpointerdown = () => isDragging = true;
+            container.onpointerdown = (e) => { isDragging = true; move(e); };
             window.onpointerup = () => isDragging = false;
-            container.onpointermove = handleMove;
+            container.onpointermove = move;
         }
 
-        function winMaze() {
-            balance += 2200; alert("ХАРД ПРОЙДЕН! +2200");
-            document.getElementById('maze-container').style.display = 'none';
-            update();
-        }
-
-        let fishTimer;
         function startFishing() {
             const zone = document.getElementById('fishing-zone');
-            const fish = document.getElementById('fish-target');
             zone.style.display = 'block';
-            let pos = 0; let dir = 5;
-            clearInterval(fishTimer);
-            fishTimer = setInterval(() => {
-                pos += dir;
-                if(pos > 85 || pos < 0) dir *= -1;
-                fish.style.left = pos + "%";
-            }, 30);
+            zone.innerHTML = ''; 
+            
+            for(let i=0; i<6; i++) { createFish(false); }
+            createFish(true);
         }
 
-        function catchFish() {
-            clearInterval(fishTimer);
-            balance += 150; alert("Поймал! +150");
-            document.getElementById('fishing-zone').style.display = 'none';
-            update();
+        function createFish(isGold) {
+            const zone = document.getElementById('fishing-zone');
+            const f = document.createElement('div');
+            f.className = 'fish';
+            f.innerText = isGold ? '👑' : '🐡';
+            f.style.top = Math.random() * 70 + "px";
+            
+            let pos = Math.random() * 80;
+            let speed = (Math.random() * 2 + 1) * (isGold ? 2.5 : 1);
+            let dir = Math.random() > 0.5 ? 1 : -1;
+
+            let moveFish = setInterval(() => {
+                pos += speed * dir;
+                if(pos > 90 || pos < 0) dir *= -1;
+                f.style.left = pos + "%";
+                f.style.transform = `scaleX(${-dir})`;
+            }, 30);
+
+            f.onclick = (e) => {
+                e.stopPropagation();
+                clearInterval(moveFish);
+                f.remove();
+                let prize = isGold ? 1000 : 150;
+                balance += prize;
+                update();
+                if(zone.querySelectorAll('.fish').length === 0) {
+                    alert("Вся рыба поймана!");
+                    zone.style.display = 'none';
+                }
+            };
+            zone.appendChild(f);
         }
 
         function update() {
             document.getElementById('balance').innerText = Math.floor(balance);
-            document.getElementById('top-bal').innerText = Math.floor(balance);
             localStorage.setItem('fugu_bal', balance);
         }
         update();
