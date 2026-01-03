@@ -3,253 +3,299 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Fugu Clicker TWA</title>
+    <title>Fugu Elite TWA</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         :root {
-            --bg-color: #000;
-            --tg-theme-bg-color: #000;
-            --neon-purp: #bc13fe;
-            --neon-org: #ff9e00;
-            --text-color: #ffffff;
+            --purp: #bc13fe;
+            --org: #ff9e00;
+            --glass: rgba(255, 255, 255, 0.07);
+            --border: rgba(255, 255, 255, 0.1);
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            background-color: var(--tg-theme-bg-color);
-            color: var(--text-color);
+            font-family: 'Segoe UI', Roboto, sans-serif;
+            background: radial-gradient(circle at top, #1a0b2e 0%, #050505 100%);
+            color: white;
             margin: 0;
             padding: 0;
             display: flex;
             flex-direction: column;
             align-items: center;
+            min-height: 100vh;
             overflow-x: hidden;
-            touch-action: manipulation; /* Убирает задержку клика на смартфонах */
+            touch-action: manipulation;
         }
 
-        /* Стиль для шапки ТГ */
+        /* Кнопка звука (нужна из-за политики браузеров) */
+        #audio-unlock {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.9);
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
         header {
             width: 100%;
-            padding: 20px 0;
+            padding: 25px 0;
+            background: var(--glass);
+            backdrop-filter: blur(15px);
+            border-bottom: 1px solid var(--border);
             text-align: center;
-            border-bottom: 1px solid var(--neon-purp);
-            box-shadow: 0 4px 15px rgba(188, 19, 254, 0.2);
-            background: rgba(0,0,0,0.8);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
 
-        #user-info {
-            font-size: 1.2rem;
-            color: var(--neon-org);
-            text-shadow: 0 0 10px var(--neon-org);
-        }
-
-        .balance-container {
-            font-size: 3rem;
-            margin: 30px 0;
-            font-weight: 900;
-            color: #fff;
-            text-shadow: 0 0 20px var(--neon-purp);
-        }
-
-        /* Фугу */
-        .fugu-btn {
-            font-size: 150px;
+        .user-badge {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+            background: linear-gradient(90deg, var(--purp), #7a0bc0);
+            font-weight: bold;
+            font-size: 0.9rem;
             cursor: pointer;
-            transition: transform 0.05s;
-            user-select: none;
-            filter: drop-shadow(0 0 20px var(--neon-purp));
+            box-shadow: 0 0 15px var(--purp);
         }
-        .fugu-btn:active { transform: scale(0.9); }
 
-        /* Слоты */
-        .casino-card {
-            background: #111;
+        .main-score {
+            font-size: 4rem;
+            font-weight: 900;
+            margin: 20px 0;
+            background: linear-gradient(to bottom, #fff, var(--org));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 0 15px rgba(255, 158, 0, 0.4));
+        }
+
+        /* Живая рыба */
+        .fugu-world {
+            position: relative;
+            margin: 20px 0;
+        }
+
+        .fugu-main {
+            font-size: 160px;
+            cursor: pointer;
+            transition: transform 0.1s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            filter: drop-shadow(0 0 40px var(--purp));
+            animation: fuguFloat 4s infinite ease-in-out;
+            display: block;
+        }
+
+        @keyframes fuguFloat {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(5deg); }
+        }
+
+        .fugu-main:active { transform: scale(0.85); }
+
+        /* Карточки */
+        .glass-card {
+            background: var(--glass);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border);
+            border-radius: 24px;
             width: 90%;
             max-width: 400px;
-            border-radius: 20px;
-            border: 2px solid var(--neon-org);
             padding: 20px;
-            margin-top: 30px;
-            text-align: center;
+            margin-bottom: 20px;
+            box-sizing: border-box;
         }
 
-        .slot-row {
+        .slots-box {
             display: flex;
             justify-content: center;
             gap: 15px;
-            font-size: 3rem;
+            font-size: 3.5rem;
             margin: 20px 0;
-            background: #000;
+            background: rgba(0,0,0,0.3);
+            border-radius: 15px;
             padding: 10px;
-            border-radius: 10px;
         }
 
-        .btn-main {
-            background: var(--neon-purp);
-            color: #fff;
+        .btn-premium {
+            background: linear-gradient(45deg, var(--org), #ff5e00);
             border: none;
-            padding: 15px 30px;
-            border-radius: 12px;
+            color: white;
+            width: 100%;
+            padding: 18px;
+            border-radius: 15px;
             font-size: 1.2rem;
             font-weight: bold;
-            width: 100%;
-            box-shadow: 0 0 15px var(--neon-purp);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            box-shadow: 0 5px 20px rgba(255, 158, 0, 0.3);
         }
 
         /* Мемы */
-        .meme-gallery {
+        .meme-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            padding: 20px;
-            width: 90%;
+            gap: 12px;
         }
-        .meme-item {
+        .meme-img {
             width: 100%;
-            border-radius: 10px;
-            border: 1px solid #333;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            filter: grayscale(0.3);
+            transition: 0.3s;
         }
+        .meme-img:hover { filter: grayscale(0); transform: scale(1.03); }
 
-        .tg-channel-btn {
-            background: #0088cc;
-            color: white;
-            text-decoration: none;
-            padding: 15px;
-            border-radius: 10px;
-            margin: 20px 0;
-            display: block;
-            width: 80%;
-            text-align: center;
-            font-weight: bold;
-        }
-
-        /* Анимация клика (+1) */
         .plus-one {
             position: absolute;
-            color: var(--neon-org);
             font-weight: bold;
-            animation: moveUp 0.5s ease-out forwards;
+            color: var(--org);
             pointer-events: none;
+            animation: flyUp 0.6s forwards;
+            font-size: 1.5rem;
         }
 
-        @keyframes moveUp {
+        @keyframes flyUp {
             0% { transform: translateY(0); opacity: 1; }
-            100% { transform: translateY(-100px); opacity: 0; }
+            100% { transform: translateY(-120px); opacity: 0; }
         }
     </style>
 </head>
 <body>
 
+<div id="audio-unlock" onclick="startApp()">
+    <h1 style="color:var(--org)">FUGU ELITE</h1>
+    <p>Нажми в любом месте для входа<br><small>(активирует радиопереговоры F1)</small></p>
+</div>
+
 <header>
-    <div id="user-info">Загрузка игрока...</div>
+    <div class="user-badge" id="user-display" onclick="changeNick()">Загрузка...</div>
 </header>
 
-<div class="balance-container">
-    <span id="balance">0</span> 🐡
+<div class="main-score" id="score">0</div>
+
+<div class="fugu-world">
+    <div class="fugu-main" id="clicker">🐡</div>
 </div>
 
-<div class="fugu-btn" id="fuguClicker">🐡</div>
-
-<div class="casino-card">
-    <div style="color: var(--neon-org); font-weight: bold;">FUGU SLOTS</div>
-    <div class="slot-row">
-        <div id="s1">🗿</div>
-        <div id="s2">🗿</div>
-        <div id="s3">🗿</div>
+<div class="glass-card">
+    <div style="text-align:center; opacity:0.7; font-size:0.8rem; letter-spacing:2px">CASINO ROYALE</div>
+    <div class="slots-box">
+        <div id="s1">🎰</div>
+        <div id="s2">🎰</div>
+        <div id="s3">🎰</div>
     </div>
-    <button class="btn-main" onclick="spin()">КРУТИТЬ (500)</button>
+    <button class="btn-premium" onclick="spin()">Крутить (500)</button>
 </div>
 
-<a href="https://t.me/Logovo_bomja_fugu" class="tg-channel-btn">ПОДПИСАТЬСЯ НА ТГК</a>
-
-<div class="meme-gallery">
-    <img src="IMG_20260101_145849_625.jpg" class="meme-item">
-    <img src="IMG_20260101_145923_474.jpg" class="meme-item">
-    <img src="IMG_20260101_145902_173.jpg" class="meme-item">
-    <img src="IMG_20260101_151706_375.jpg" class="meme-item">
+<div class="glass-card">
+    <h4 style="margin:0 0 15px 0; color:var(--purp)">MEME COLLECTION</h4>
+    <div class="meme-grid">
+        <img src="IMG_20260101_145849_625.jpg" class="meme-img">
+        <img src="IMG_20260101_145923_474.jpg" class="meme-img">
+        <img src="IMG_20260101_145902_173.jpg" class="meme-img">
+        <img src="IMG_20260101_151706_375.jpg" class="meme-img">
+    </div>
 </div>
+
+<a href="https://t.me/Logovo_bomja_fugu" style="color:var(--purp); text-decoration:none; margin-bottom:40px;">→ Перейти в Логово Фугу ←</a>
+
+<audio id="f1-sound" src="f1_radio_sound-293747.mp3" preload="auto"></audio>
 
 <script>
     const tg = window.Telegram.WebApp;
-    tg.expand(); // Раскрыть на всё окно
+    tg.expand();
 
-    let balance = parseInt(localStorage.getItem('fuguBalance')) || 0;
-    const symbols = ['💎', '💰', '🤡', '💀', '🐡'];
+    let balance = parseInt(localStorage.getItem('fugu_bal')) || 0;
+    let nick = localStorage.getItem('fugu_nick') || tg.initDataUnsafe?.user?.first_name || "Босс";
+    const sound = document.getElementById('f1-sound');
 
-    // Инициализация данных игрока из Telegram
-    const userDisplay = document.getElementById('user-info');
-    if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
-        userDisplay.innerText = `Босс: ${tg.initDataUnsafe.user.first_name}`;
-    } else {
-        userDisplay.innerText = "Босс: Анонимный Фугу";
+    function startApp() {
+        document.getElementById('audio-unlock').style.display = 'none';
+        playSound();
+        // Запуск рандомных звуков
+        scheduleRandomSound();
     }
 
-    const balanceEl = document.getElementById('balance');
-    const fuguBtn = document.getElementById('fuguClicker');
-
-    function updateBalance() {
-        balanceEl.innerText = balance;
-        localStorage.setItem('fuguBalance', balance);
+    function playSound() {
+        sound.currentTime = 0;
+        sound.play().catch(e => console.log("Нужен клик для звука"));
     }
 
-    // Клик с вибрацией
-    fuguBtn.addEventListener('click', (e) => {
+    function scheduleRandomSound() {
+        let delay = Math.random() * (60000 - 20000) + 20000; // от 20 до 60 сек
+        setTimeout(() => {
+            playSound();
+            scheduleRandomSound();
+        }, delay);
+    }
+
+    function updateUI() {
+        document.getElementById('score').innerText = balance.toLocaleString();
+        document.getElementById('user-display').innerText = `👑 ${nick}`;
+        localStorage.setItem('fugu_bal', balance);
+        localStorage.setItem('fugu_nick', nick);
+    }
+
+    function changeNick() {
+        const n = prompt("Твой новый позывной:", nick);
+        if(n) { nick = n; updateUI(); }
+    }
+
+    document.getElementById('clicker').onclick = (e) => {
         balance++;
-        updateBalance();
-        
-        // Вибрация (только в ТГ на телефоне)
-        tg.HapticFeedback.impactOccurred('medium');
+        updateUI();
+        tg.HapticFeedback.impactOccurred('light');
 
-        // Создаем текст +1
-        const p1 = document.createElement('div');
-        p1.innerText = "+1";
-        p1.className = "plus-one";
-        p1.style.left = e.pageX + "px";
-        p1.style.top = e.pageY + "px";
-        document.body.appendChild(p1);
-        setTimeout(() => p1.remove(), 500);
-    });
+        const p = document.createElement('div');
+        p.className = 'plus-one';
+        p.innerText = '+1';
+        p.style.left = e.clientX + 'px';
+        p.style.top = e.clientY + 'px';
+        document.body.appendChild(p);
+        setTimeout(() => p.remove(), 600);
+    };
 
-    // Слоты
     function spin() {
-        if (balance < 500) {
-            tg.showAlert("Иди работай, бомж! Нужно 500 монет.");
+        if(balance < 500) {
+            tg.showPopup({message: "Недостаточно средств!"});
             return;
         }
-        
         balance -= 500;
-        updateBalance();
+        updateUI();
+        playSound(); // Звук при покупке/спине
         tg.HapticFeedback.notificationOccurred('warning');
 
-        let count = 0;
-        const interval = setInterval(() => {
-            document.getElementById('s1').innerText = symbols[Math.floor(Math.random()*symbols.length)];
-            document.getElementById('s2').innerText = symbols[Math.floor(Math.random()*symbols.length)];
-            document.getElementById('s3').innerText = symbols[Math.floor(Math.random()*symbols.length)];
-            count++;
-            if(count > 10) {
-                clearInterval(interval);
-                checkWin();
+        let it = 0;
+        const syms = ['💎','🐡','🤡','💀','🔥'];
+        const timer = setInterval(() => {
+            document.getElementById('s1').innerText = syms[Math.floor(Math.random()*syms.length)];
+            document.getElementById('s2').innerText = syms[Math.floor(Math.random()*syms.length)];
+            document.getElementById('s3').innerText = syms[Math.floor(Math.random()*syms.length)];
+            it++;
+            if(it > 15) {
+                clearInterval(timer);
+                checkSlots();
             }
-        }, 100);
+        }, 70);
     }
 
-    function checkWin() {
-        const s1 = document.getElementById('s1').innerText;
-        const s2 = document.getElementById('s2').innerText;
-        const s3 = document.getElementById('s3').innerText;
+    function checkSlots() {
+        const r1 = document.getElementById('s1').innerText;
+        const r2 = document.getElementById('s2').innerText;
+        const r3 = document.getElementById('s3').innerText;
 
-        if (s1 === s2 && s2 === s3) {
-            let win = 5000;
-            if (s1 === '🐡') win = 50000;
-            balance += win;
-            tg.showAlert(`ДЖЕКПОТ! Ты поднял ${win} монет!`);
+        if(r1 === r2 && r2 === r3) {
+            let w = r1 === '🐡' ? 50000 : 5000;
+            balance += w;
+            tg.showAlert("ДЖЕКПОТ: +" + w);
             tg.HapticFeedback.notificationOccurred('success');
         }
-        updateBalance();
+        updateUI();
     }
 
-    updateBalance();
+    updateUI();
 </script>
 </body>
 </html>
