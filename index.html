@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Fugu Elite TWA</title>
+    <title>Fugu Elite TWA + Store</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         :root {
@@ -16,146 +16,79 @@
         body {
             font-family: 'Segoe UI', Roboto, sans-serif;
             background: radial-gradient(circle at top, #1a0b2e 0%, #050505 100%);
-            color: white;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            min-height: 100vh;
-            overflow-x: hidden;
-            touch-action: manipulation;
+            color: white; margin: 0; padding: 0;
+            display: flex; flex-direction: column; align-items: center;
+            min-height: 100vh; overflow-x: hidden; touch-action: manipulation;
         }
 
-        /* Кнопка звука (нужна из-за политики браузеров) */
         #audio-unlock {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.9);
-            z-index: 9999;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.9); z-index: 9999;
+            display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;
         }
 
         header {
-            width: 100%;
-            padding: 25px 0;
-            background: var(--glass);
-            backdrop-filter: blur(15px);
-            border-bottom: 1px solid var(--border);
-            text-align: center;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            width: 100%; padding: 25px 0; background: var(--glass);
+            backdrop-filter: blur(15px); border-bottom: 1px solid var(--border);
+            text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
 
         .user-badge {
-            display: inline-block;
-            padding: 5px 15px;
-            border-radius: 20px;
+            display: inline-block; padding: 5px 15px; border-radius: 20px;
             background: linear-gradient(90deg, var(--purp), #7a0bc0);
-            font-weight: bold;
-            font-size: 0.9rem;
-            cursor: pointer;
-            box-shadow: 0 0 15px var(--purp);
+            font-weight: bold; font-size: 0.9rem; cursor: pointer; box-shadow: 0 0 15px var(--purp);
         }
 
         .main-score {
-            font-size: 4rem;
-            font-weight: 900;
-            margin: 20px 0;
+            font-size: 3.5rem; font-weight: 900; margin: 15px 0;
             background: linear-gradient(to bottom, #fff, var(--org));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
             filter: drop-shadow(0 0 15px rgba(255, 158, 0, 0.4));
         }
 
-        /* Живая рыба */
-        .fugu-world {
-            position: relative;
-            margin: 20px 0;
-        }
-
         .fugu-main {
-            font-size: 160px;
-            cursor: pointer;
-            transition: transform 0.1s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            font-size: 140px; cursor: pointer; transition: transform 0.1s;
             filter: drop-shadow(0 0 40px var(--purp));
             animation: fuguFloat 4s infinite ease-in-out;
-            display: block;
         }
-
         @keyframes fuguFloat {
             0%, 100% { transform: translateY(0) rotate(0deg); }
-            50% { transform: translateY(-20px) rotate(5deg); }
+            50% { transform: translateY(-15px) rotate(3deg); }
         }
-
         .fugu-main:active { transform: scale(0.85); }
 
-        /* Карточки */
         .glass-card {
-            background: var(--glass);
-            backdrop-filter: blur(10px);
-            border: 1px solid var(--border);
-            border-radius: 24px;
-            width: 90%;
-            max-width: 400px;
-            padding: 20px;
-            margin-bottom: 20px;
-            box-sizing: border-box;
-        }
-
-        .slots-box {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            font-size: 3.5rem;
-            margin: 20px 0;
-            background: rgba(0,0,0,0.3);
-            border-radius: 15px;
-            padding: 10px;
+            background: var(--glass); backdrop-filter: blur(10px);
+            border: 1px solid var(--border); border-radius: 24px;
+            width: 90%; max-width: 400px; padding: 20px; margin-bottom: 20px; box-sizing: border-box;
         }
 
         .btn-premium {
             background: linear-gradient(45deg, var(--org), #ff5e00);
-            border: none;
-            color: white;
-            width: 100%;
-            padding: 18px;
-            border-radius: 15px;
-            font-size: 1.2rem;
-            font-weight: bold;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            cursor: pointer;
-            box-shadow: 0 5px 20px rgba(255, 158, 0, 0.3);
+            border: none; color: white; width: 100%; padding: 18px;
+            border-radius: 15px; font-size: 1.1rem; font-weight: bold;
+            text-transform: uppercase; cursor: pointer; margin-top: 10px;
         }
 
-        /* Мемы */
-        .meme-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
+        /* МАГАЗИН */
+        .store-item {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 15px; background: rgba(255,255,255,0.05);
+            border-radius: 15px; margin-bottom: 10px; border: 1px solid var(--border);
         }
-        .meme-img {
-            width: 100%;
-            border-radius: 12px;
-            border: 1px solid var(--border);
-            filter: grayscale(0.3);
-            transition: 0.3s;
+        .store-info h4 { margin: 0; color: var(--org); }
+        .store-info p { margin: 0; font-size: 0.75rem; opacity: 0.7; }
+        
+        .buy-btn {
+            background: var(--purp); border: none; color: white;
+            padding: 8px 12px; border-radius: 8px; font-weight: bold; cursor: pointer;
         }
-        .meme-img:hover { filter: grayscale(0); transform: scale(1.03); }
+        .buy-btn:disabled { background: #444; opacity: 0.5; }
 
         .plus-one {
-            position: absolute;
-            font-weight: bold;
-            color: var(--org);
-            pointer-events: none;
-            animation: flyUp 0.6s forwards;
-            font-size: 1.5rem;
+            position: absolute; font-weight: bold; color: var(--org);
+            pointer-events: none; animation: flyUp 0.6s forwards; font-size: 1.5rem;
         }
-
         @keyframes flyUp {
             0% { transform: translateY(0); opacity: 1; }
             100% { transform: translateY(-120px); opacity: 0; }
@@ -166,40 +99,57 @@
 
 <div id="audio-unlock" onclick="startApp()">
     <h1 style="color:var(--org)">FUGU ELITE</h1>
-    <p>Нажми в любом месте для входа<br><small>(активирует радиопереговоры F1)</small></p>
+    <p>ВХОД В ЛОГОВО<br><small>(активировать звук F1)</small></p>
 </div>
 
 <header>
-    <div class="user-badge" id="user-display" onclick="changeNick()">Загрузка...</div>
+    <div class="user-badge" id="user-display" onclick="changeNick()">👑 Загрузка...</div>
 </header>
 
 <div class="main-score" id="score">0</div>
+<div style="font-size: 0.9rem; margin-top: -10px; opacity: 0.6;" id="cps-info">Доход: 0/сек</div>
 
-<div class="fugu-world">
+<div style="position:relative; margin: 20px 0;">
     <div class="fugu-main" id="clicker">🐡</div>
 </div>
 
 <div class="glass-card">
+    <h3 style="margin:0 0 15px 0; color:var(--org); text-align:center;">🛒 UPGRADE STORE</h3>
+    
+    <div class="store-item">
+        <div class="store-info">
+            <h4>Золотой Палец</h4>
+            <p id="click-lv">Ур. 1 (+1 за клик)</p>
+        </div>
+        <button class="buy-btn" onclick="buyUpgrade('click')" id="btn-click-buy">Цена: 100</button>
+    </div>
+
+    <div class="store-item">
+        <div class="store-info">
+            <h4>Фугу-Бот</h4>
+            <p id="auto-lv">Ур. 0 (+1/сек пассивно)</p>
+        </div>
+        <button class="buy-btn" onclick="buyUpgrade('auto')" id="btn-auto-buy">Цена: 500</button>
+    </div>
+</div>
+
+<div class="glass-card">
     <div style="text-align:center; opacity:0.7; font-size:0.8rem; letter-spacing:2px">CASINO ROYALE</div>
-    <div class="slots-box">
-        <div id="s1">🎰</div>
-        <div id="s2">🎰</div>
-        <div id="s3">🎰</div>
+    <div style="display:flex; justify-content:center; gap:15px; font-size:3rem; margin:15px 0;">
+        <div id="s1">🎲</div><div id="s2">🎲</div><div id="s3">🎲</div>
     </div>
     <button class="btn-premium" onclick="spin()">Крутить (500)</button>
 </div>
 
 <div class="glass-card">
     <h4 style="margin:0 0 15px 0; color:var(--purp)">MEME COLLECTION</h4>
-    <div class="meme-grid">
-        <img src="IMG_20260101_145849_625.jpg" class="meme-img">
-        <img src="IMG_20260101_145923_474.jpg" class="meme-img">
-        <img src="IMG_20260101_145902_173.jpg" class="meme-img">
-        <img src="IMG_20260101_151706_375.jpg" class="meme-img">
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+        <img src="IMG_20260101_145849_625.jpg" style="width:100%; border-radius:10px;">
+        <img src="IMG_20260101_145923_474.jpg" style="width:100%; border-radius:10px;">
+        <img src="IMG_20260101_145902_173.jpg" style="width:100%; border-radius:10px;">
+        <img src="IMG_20260101_151706_375.jpg" style="width:100%; border-radius:10px;">
     </div>
 </div>
-
-<a href="https://t.me/Logovo_bomja_fugu" style="color:var(--purp); text-decoration:none; margin-bottom:40px;">→ Перейти в Логово Фугу ←</a>
 
 <audio id="f1-sound" src="f1_radio_sound-293747.mp3" preload="auto"></audio>
 
@@ -209,90 +159,101 @@
 
     let balance = parseInt(localStorage.getItem('fugu_bal')) || 0;
     let nick = localStorage.getItem('fugu_nick') || tg.initDataUnsafe?.user?.first_name || "Босс";
+    
+    // Данные магазина
+    let clickLv = parseInt(localStorage.getItem('fugu_click_lv')) || 1;
+    let autoLv = parseInt(localStorage.getItem('fugu_auto_lv')) || 0;
+
     const sound = document.getElementById('f1-sound');
 
     function startApp() {
         document.getElementById('audio-unlock').style.display = 'none';
         playSound();
-        // Запуск рандомных звуков
-        scheduleRandomSound();
+        setInterval(processAutoIncome, 1000); // Пассивный доход раз в секунду
     }
 
     function playSound() {
         sound.currentTime = 0;
-        sound.play().catch(e => console.log("Нужен клик для звука"));
-    }
-
-    function scheduleRandomSound() {
-        let delay = Math.random() * (60000 - 20000) + 20000; // от 20 до 60 сек
-        setTimeout(() => {
-            playSound();
-            scheduleRandomSound();
-        }, delay);
+        sound.play().catch(e => {});
     }
 
     function updateUI() {
-        document.getElementById('score').innerText = balance.toLocaleString();
+        document.getElementById('score').innerText = Math.floor(balance).toLocaleString();
         document.getElementById('user-display').innerText = `👑 ${nick}`;
+        document.getElementById('cps-info').innerText = `Доход: ${autoLv}/сек | Сила клика: ${clickLv}`;
+        
+        // Кнопки магазина
+        const clickPrice = clickLv * 150;
+        const autoPrice = (autoLv + 1) * 600;
+        
+        document.getElementById('btn-click-buy').innerText = `Цена: ${clickPrice}`;
+        document.getElementById('btn-auto-buy').innerText = `Цена: ${autoPrice}`;
+        document.getElementById('click-lv').innerText = `Ур. ${clickLv} (+${clickLv} за клик)`;
+        document.getElementById('auto-lv').innerText = `Ур. ${autoLv} (+${autoLv}/сек)`;
+
         localStorage.setItem('fugu_bal', balance);
         localStorage.setItem('fugu_nick', nick);
+        localStorage.setItem('fugu_click_lv', clickLv);
+        localStorage.setItem('fugu_auto_lv', autoLv);
     }
 
-    function changeNick() {
-        const n = prompt("Твой новый позывной:", nick);
-        if(n) { nick = n; updateUI(); }
+    function buyUpgrade(type) {
+        if(type === 'click') {
+            let price = clickLv * 150;
+            if(balance >= price) {
+                balance -= price; clickLv++; playSound();
+            }
+        } else {
+            let price = (autoLv + 1) * 600;
+            if(balance >= price) {
+                balance -= price; autoLv++; playSound();
+            }
+        }
+        updateUI();
+    }
+
+    function processAutoIncome() {
+        if(autoLv > 0) {
+            balance += autoLv;
+            updateUI();
+        }
     }
 
     document.getElementById('clicker').onclick = (e) => {
-        balance++;
+        balance += clickLv;
         updateUI();
-        tg.HapticFeedback.impactOccurred('light');
-
+        tg.HapticFeedback.impactOccurred('medium');
         const p = document.createElement('div');
-        p.className = 'plus-one';
-        p.innerText = '+1';
-        p.style.left = e.clientX + 'px';
-        p.style.top = e.clientY + 'px';
+        p.className = 'plus-one'; p.innerText = `+${clickLv}`;
+        p.style.left = e.clientX + 'px'; p.style.top = e.clientY + 'px';
         document.body.appendChild(p);
         setTimeout(() => p.remove(), 600);
     };
 
     function spin() {
-        if(balance < 500) {
-            tg.showPopup({message: "Недостаточно средств!"});
-            return;
-        }
-        balance -= 500;
-        updateUI();
-        playSound(); // Звук при покупке/спине
-        tg.HapticFeedback.notificationOccurred('warning');
-
-        let it = 0;
-        const syms = ['💎','🐡','🤡','💀','🔥'];
+        if(balance < 500) return tg.showAlert("Мало денег!");
+        balance -= 500; updateUI(); playSound();
+        let it = 0; const syms = ['💎','🐡','🤡','💀','🔥'];
         const timer = setInterval(() => {
-            document.getElementById('s1').innerText = syms[Math.floor(Math.random()*syms.length)];
-            document.getElementById('s2').innerText = syms[Math.floor(Math.random()*syms.length)];
-            document.getElementById('s3').innerText = syms[Math.floor(Math.random()*syms.length)];
-            it++;
-            if(it > 15) {
-                clearInterval(timer);
-                checkSlots();
-            }
+            document.getElementById('s1').innerText = syms[Math.floor(Math.random()*5)];
+            document.getElementById('s2').innerText = syms[Math.floor(Math.random()*5)];
+            document.getElementById('s3').innerText = syms[Math.floor(Math.random()*5)];
+            if(++it > 15) { clearInterval(timer); checkSlots(); }
         }, 70);
     }
 
     function checkSlots() {
-        const r1 = document.getElementById('s1').innerText;
-        const r2 = document.getElementById('s2').innerText;
-        const r3 = document.getElementById('s3').innerText;
-
-        if(r1 === r2 && r2 === r3) {
-            let w = r1 === '🐡' ? 50000 : 5000;
-            balance += w;
-            tg.showAlert("ДЖЕКПОТ: +" + w);
-            tg.HapticFeedback.notificationOccurred('success');
+        const r = [document.getElementById('s1').innerText, document.getElementById('s2').innerText, document.getElementById('s3').innerText];
+        if(r[0] === r[1] && r[1] === r[2]) {
+            let w = r[0] === '🐡' ? 50000 : 5000;
+            balance += w; tg.showAlert("ВИН! +" + w);
         }
         updateUI();
+    }
+
+    function changeNick() {
+        const n = prompt("Новый ник:", nick);
+        if(n) { nick = n; updateUI(); }
     }
 
     updateUI();
