@@ -2,153 +2,626 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Fugu High Roller</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Фугу Кликер 🐡</title>
     <style>
-        :root { --gold: #ffcc00; --blue: #0088cc; --bg: #0a0a0a; --card: #161616; --neon: #00ffcc; --red: #ff4444; }
-        body { background: var(--bg); color: white; font-family: sans-serif; margin: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; overflow-y: auto; }
-        
-        .header { text-align: center; margin: 20px 0; width: 100%; }
-        #balance { font-size: 35px; color: var(--gold); font-weight: 900; word-break: break-all; padding: 0 10px; }
-        .stats-line { font-size: 13px; color: #888; margin-bottom: 5px; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-        .main-coin { width: 150px; height: 150px; background: radial-gradient(circle, #ffe082, #fbc02d); border-radius: 50%; border: 6px solid var(--gold); display: flex; justify-content: center; align-items: center; font-size: 75px; cursor: pointer; user-select: none; margin: 10px auto; box-shadow: 0 0 30px rgba(255,204,0,0.2); transition: transform 0.05s; }
-        .main-coin:active { transform: scale(0.92); }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0a0a0f 0%, #1a1a2e 100%);
+            min-height: 100vh;
+            color: #e0e0e0;
+        }
 
-        .game-card { background: var(--card); border-radius: 20px; border: 1px solid #333; width: 92%; max-width: 400px; padding: 15px; margin-bottom: 20px; text-align: center; }
-        .btn { background: var(--blue); color: white; border: none; padding: 14px; border-radius: 12px; width: 100%; font-weight: bold; cursor: pointer; font-size: 16px; margin-top: 5px; }
-        
-        /* СТИЛЬ ВВОДА СТАВКИ */
-        .dep-input { background: #000; border: 2px solid var(--blue); color: var(--gold); padding: 10px; border-radius: 8px; width: 80%; font-size: 18px; text-align: center; margin-bottom: 10px; font-weight: bold; outline: none; }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
 
-        .shop-item { background: #000; border: 1px solid #444; padding: 12px; border-radius: 12px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
-        .shop-info { text-align: left; }
-        .shop-price { color: var(--gold); font-weight: bold; font-size: 14px; }
-        .lvl-badge { font-size: 10px; background: #333; padding: 2px 6px; border-radius: 4px; color: #aaa; }
+        header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
 
-        .memes { display: flex; flex-direction: column; gap: 20px; width: 100%; align-items: center; padding: 20px 0 100px 0; }
-        .memes img { width: 90%; max-width: 360px; border-radius: 15px; border: 2px solid #222; }
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 0 0 20px rgba(138, 43, 226, 0.8),
+                         0 0 40px rgba(138, 43, 226, 0.5);
+            color: #fff;
+        }
+
+        header p {
+            color: #b8b8d1;
+        }
+
+        .game-section {
+            background: rgba(15, 15, 25, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 0 30px rgba(138, 43, 226, 0.3),
+                        0 10px 30px rgba(0,0,0,0.5);
+            border: 1px solid rgba(138, 43, 226, 0.3);
+        }
+
+        .nickname-section {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .nickname-section input {
+            padding: 10px 15px;
+            font-size: 1em;
+            border: 2px solid #8a2be2;
+            border-radius: 10px;
+            width: 250px;
+            margin-right: 10px;
+            background: rgba(10, 10, 15, 0.9);
+            color: #e0e0e0;
+            box-shadow: 0 0 10px rgba(138, 43, 226, 0.3);
+        }
+
+        .nickname-section input:focus {
+            outline: none;
+            box-shadow: 0 0 20px rgba(138, 43, 226, 0.6);
+        }
+
+        .nickname-section button {
+            padding: 10px 20px;
+            font-size: 1em;
+            background: linear-gradient(135deg, #8a2be2, #9d4edd);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: 0.3s;
+            box-shadow: 0 0 15px rgba(138, 43, 226, 0.4);
+        }
+
+        .nickname-section button:hover {
+            background: linear-gradient(135deg, #9d4edd, #8a2be2);
+            box-shadow: 0 0 25px rgba(138, 43, 226, 0.6);
+            transform: translateY(-2px);
+        }
+
+        .current-nickname {
+            margin-top: 10px;
+            color: #c77dff;
+            font-weight: bold;
+        }
+
+        .clicker-area {
+            text-align: center;
+            padding: 20px;
+        }
+
+        .fugu-button {
+            font-size: 120px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            transition: transform 0.1s;
+            user-select: none;
+            filter: drop-shadow(0 0 20px rgba(138, 43, 226, 0.5));
+        }
+
+        .fugu-button:active {
+            transform: scale(0.95);
+        }
+
+        .score {
+            font-size: 2em;
+            color: #c77dff;
+            margin: 20px 0;
+            font-weight: bold;
+            text-shadow: 0 0 15px rgba(138, 43, 226, 0.6);
+        }
+
+        .stats {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+
+        .stat-item {
+            color: #b8b8d1;
+            font-size: 0.9em;
+        }
+
+        .stat-item span {
+            color: #c77dff;
+            font-weight: bold;
+        }
+
+        .skill-tree-section {
+            background: rgba(15, 15, 25, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 0 30px rgba(138, 43, 226, 0.3),
+                        0 10px 30px rgba(0,0,0,0.5);
+            border: 1px solid rgba(138, 43, 226, 0.3);
+        }
+
+        .skill-tree-section h2 {
+            color: #c77dff;
+            margin-bottom: 30px;
+            text-align: center;
+            text-shadow: 0 0 15px rgba(138, 43, 226, 0.6);
+        }
+
+        .skill-tree {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+            align-items: center;
+        }
+
+        .skill-tier {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+            position: relative;
+        }
+
+        .skill-node {
+            width: 140px;
+            background: rgba(10, 10, 15, 0.9);
+            border: 3px solid #555;
+            border-radius: 15px;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: 0.3s;
+            position: relative;
+        }
+
+        .skill-node.unlocked {
+            border-color: #8a2be2;
+            box-shadow: 0 0 20px rgba(138, 43, 226, 0.4);
+        }
+
+        .skill-node.available {
+            border-color: #10b981;
+            box-shadow: 0 0 20px rgba(16, 185, 129, 0.4);
+        }
+
+        .skill-node.locked {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .skill-node:hover:not(.locked) {
+            transform: translateY(-5px);
+            box-shadow: 0 0 30px rgba(138, 43, 226, 0.6);
+        }
+
+        .skill-icon {
+            font-size: 2.5em;
+            margin-bottom: 8px;
+        }
+
+        .skill-name {
+            font-size: 0.9em;
+            font-weight: bold;
+            color: #c77dff;
+            margin-bottom: 5px;
+        }
+
+        .skill-level {
+            font-size: 0.8em;
+            color: #7dd3fc;
+            margin-bottom: 8px;
+        }
+
+        .skill-price {
+            font-size: 0.85em;
+            color: #fbbf24;
+            font-weight: bold;
+        }
+
+        .skill-requirement {
+            font-size: 0.75em;
+            color: #ef4444;
+            margin-top: 5px;
+        }
+
+        .slots-section {
+            text-align: center;
+            padding: 20px;
+            border-top: 2px solid rgba(138, 43, 226, 0.3);
+            margin-top: 20px;
+        }
+
+        .warning {
+            background: rgba(255, 193, 7, 0.1);
+            border: 2px solid #ffc107;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+            color: #ffc107;
+        }
+
+        .warning strong {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .bet-controls {
+            margin: 20px 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .bet-controls label {
+            color: #b8b8d1;
+            font-weight: bold;
+        }
+
+        .bet-controls input {
+            padding: 8px 15px;
+            font-size: 1em;
+            border: 2px solid #8a2be2;
+            border-radius: 8px;
+            width: 120px;
+            background: rgba(10, 10, 15, 0.9);
+            color: #e0e0e0;
+            text-align: center;
+        }
+
+        .bet-controls input:focus {
+            outline: none;
+            box-shadow: 0 0 15px rgba(138, 43, 226, 0.5);
+        }
+
+        .slots-display {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin: 20px 0;
+        }
+
+        .slot {
+            width: 80px;
+            height: 80px;
+            background: rgba(10, 10, 15, 0.9);
+            border: 3px solid #8a2be2;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5em;
+            box-shadow: 0 0 15px rgba(138, 43, 226, 0.3);
+        }
+
+        .slot.spinning {
+            animation: spin 0.1s infinite;
+        }
+
+        @keyframes spin {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+
+        .spin-button {
+            padding: 15px 40px;
+            font-size: 1.2em;
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: 0.3s;
+            margin-top: 10px;
+            box-shadow: 0 0 15px rgba(16, 185, 129, 0.4);
+        }
+
+        .spin-button:hover {
+            box-shadow: 0 0 25px rgba(16, 185, 129, 0.6);
+            transform: translateY(-2px);
+        }
+
+        .spin-button:disabled {
+            background: #333;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        .result-message {
+            margin-top: 15px;
+            font-size: 1.2em;
+            font-weight: bold;
+            min-height: 30px;
+        }
+
+        .leaderboard {
+            background: rgba(15, 15, 25, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 0 30px rgba(138, 43, 226, 0.3),
+                        0 10px 30px rgba(0,0,0,0.5);
+            border: 1px solid rgba(138, 43, 226, 0.3);
+        }
+
+        .leaderboard h2 {
+            color: #c77dff;
+            margin-bottom: 20px;
+            text-align: center;
+            text-shadow: 0 0 15px rgba(138, 43, 226, 0.6);
+        }
+
+        .leaderboard-list {
+            list-style: none;
+        }
+
+        .leaderboard-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 15px;
+            margin-bottom: 10px;
+            background: rgba(10, 10, 15, 0.9);
+            border-radius: 10px;
+            border-left: 4px solid #8a2be2;
+            transition: 0.3s;
+        }
+
+        .leaderboard-item:hover {
+            box-shadow: 0 0 15px rgba(138, 43, 226, 0.3);
+        }
+
+        .leaderboard-item.top1 {
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 237, 78, 0.2));
+            border-left-color: #ffd700;
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
+        }
+
+        .leaderboard-item .rank {
+            font-weight: bold;
+            color: #c77dff;
+            margin-right: 15px;
+        }
+
+        .leaderboard-item .name {
+            flex: 1;
+            font-weight: bold;
+            color: #e0e0e0;
+        }
+
+        .leaderboard-item .score-value {
+            color: #10b981;
+            font-weight: bold;
+        }
+
+        .memes-section {
+            background: rgba(15, 15, 25, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            margin-top: 20px;
+            box-shadow: 0 0 30px rgba(138, 43, 226, 0.3),
+                        0 10px 30px rgba(0,0,0,0.5);
+            border: 1px solid rgba(138, 43, 226, 0.3);
+        }
+
+        .memes-section h2 {
+            color: #c77dff;
+            margin-bottom: 20px;
+            text-align: center;
+            text-shadow: 0 0 15px rgba(138, 43, 226, 0.6);
+        }
+
+        .memes-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+        }
+
+        .meme-item {
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 0 15px rgba(138, 43, 226, 0.3);
+            transition: transform 0.3s;
+            border: 2px solid rgba(138, 43, 226, 0.3);
+        }
+
+        .meme-item:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 25px rgba(138, 43, 226, 0.5);
+        }
+
+        .meme-item img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        footer {
+            text-align: center;
+            color: #b8b8d1;
+            padding: 20px;
+            margin-top: 30px;
+        }
+
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+
+        .social-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            background: rgba(138, 43, 226, 0.2);
+            border: 2px solid #8a2be2;
+            border-radius: 10px;
+            color: #c77dff;
+            text-decoration: none;
+            transition: 0.3s;
+            font-weight: bold;
+        }
+
+        .social-link:hover {
+            background: rgba(138, 43, 226, 0.4);
+            box-shadow: 0 0 20px rgba(138, 43, 226, 0.5);
+            transform: translateY(-2px);
+        }
+
+        h3 {
+            color: #c77dff;
+            text-shadow: 0 0 15px rgba(138, 43, 226, 0.6);
+        }
     </style>
 </head>
 <body>
+    <div class="container">
+        <header>
+            <h1>🐡 Фугу Кликер 🐡</h1>
+            <p>Кликай на фугу и зарабатывай монеты!</p>
+        </header>
 
-    <div class="header">
-        <div class="stats-line">Игрок: <span id="u-nick">FuguSUS</span></div>
-        <div id="balance">0</div>
-        <div class="stats-line">Сила клика: <span id="tap-val">10</span></div>
-    </div>
-
-    <div class="main-coin" onclick="tap()">膨</div>
-
-    <div class="game-card">
-        <div style="font-size:14px; font-weight:bold; margin-bottom:10px; color:var(--red)">🎰 ДЕП-МАШИНА (X-BET)</div>
-        <div id="slots" style="font-size:32px; letter-spacing:8px; margin-bottom:15px;">💎 7 🦆</div>
-        
-        <div style="font-size:11px; color:#888; margin-bottom:5px;">СУММА ДЕПА:</div>
-        <input type="number" id="bet-amount" class="dep-input" value="50" min="1">
-        
-        <button class="btn" onclick="playSlots()">КРУТИТЬ КАЗИК</button>
-        <div style="font-size:10px; color:#666; margin-top:10px;">x10 за 3 совпадения | x2 за 2 совпадения</div>
-    </div>
-
-    <div class="game-card">
-        <div style="font-size:16px; font-weight:bold; margin-bottom:15px; color:var(--neon)">🛒 МАГАЗИН ВЫПЕЧКИ</div>
-        
-        <div class="shop-item">
-            <div class="shop-info">
-                <div>Мякиш (+5) <span class="lvl-badge" id="lvl1">Lvl 0</span></div>
-                <div class="shop-price" id="price1">1000$</div>
+        <div class="game-section">
+            <div class="nickname-section">
+                <input type="text" id="nicknameInput" placeholder="Введите свой ник" maxlength="20">
+                <button onclick="setNickname()">Установить ник</button>
+                <div class="current-nickname" id="currentNickname">Ник: Аноним</div>
             </div>
-            <button class="btn" style="width:100px; padding:10px;" onclick="buyUpgrade(1)">КУПИТЬ</button>
+
+            <div class="clicker-area">
+                <div class="score">Монет: <span id="score">0</span> 🪙</div>
+                <button class="fugu-button" onclick="clickFugu()">🐡</button>
+                <div class="stats">
+                    <div class="stat-item">Клик = <span id="clickValue">1</span> 🪙</div>
+                    <div class="stat-item">Пассивный доход: <span id="passiveIncome">0</span> 🪙/сек</div>
+                </div>
+            </div>
+
+            <div class="slots-section">
+                <h3 style="margin-bottom: 15px;">🎰 Слоты 🎰</h3>
+                
+                <div class="warning">
+                    <strong>⚠️ ВНИМАНИЕ!</strong>
+                    Это азартная игра! Играйте ответственно. Автор не несет ответственности за проигранные монеты. Вы играете на свой страх и риск!
+                </div>
+
+                <div class="bet-controls">
+                    <label for="betAmount">Ставка:</label>
+                    <input type="number" id="betAmount" min="10" value="10" step="10">
+                    <span style="color: #b8b8d1;">🪙</span>
+                </div>
+
+                <div class="slots-display">
+                    <div class="slot" id="slot1">🍒</div>
+                    <div class="slot" id="slot2">🍋</div>
+                    <div class="slot" id="slot3">🐡</div>
+                </div>
+
+                <button class="spin-button" onclick="spinSlots()" id="spinButton">
+                    ДЕП! ДЕП!
+                </button>
+                <div class="result-message" id="resultMessage"></div>
+
+                <div style="margin-top: 20px; font-size: 0.9em; color: #b8b8d1;">
+                    <strong>Выигрыши:</strong><br>
+                    3 одинаковых = x10 (ставка × 10)<br>
+                    2 одинаковых = x2 (ставка × 2)
+                </div>
+            </div>
         </div>
 
-        <div class="shop-item">
-            <div class="shop-info">
-                <div>Батон (+25) <span class="lvl-badge" id="lvl2">Lvl 0</span></div>
-                <div class="shop-price" id="price2">5000$</div>
+        <div class="skill-tree-section">
+            <h2>🌳 Древо прокачки</h2>
+            <div class="skill-tree">
+                <!-- Tier 1 -->
+                <div class="skill-tier">
+                    <div class="skill-node" id="node-click" onclick="buySkill('click')">
+                        <div class="skill-icon">👆</div>
+                        <div class="skill-name">Сильный клик</div>
+                        <div class="skill-level">Ур. <span id="level-click">0</span></div>
+                        <div class="skill-price"><span id="price-click">55</span> 🪙</div>
+                    </div>
+                    <div class="skill-node" id="node-crit" onclick="buySkill('crit')">
+                        <div class="skill-icon">💥</div>
+                        <div class="skill-name">Крит. удар</div>
+                        <div class="skill-level">Ур. <span id="level-crit">0</span></div>
+                        <div class="skill-price"><span id="price-crit">50</span> 🪙</div>
+                    </div>
+                </div>
+
+                <!-- Tier 2 -->
+                <div class="skill-tier">
+                    <div class="skill-node locked" id="node-megaclick" onclick="buySkill('megaclick')">
+                        <div class="skill-icon">⚡</div>
+                        <div class="skill-name">Мега клик</div>
+                        <div class="skill-level">Ур. <span id="level-megaclick">0</span></div>
+                        <div class="skill-price"><span id="price-megaclick">250</span> 🪙</div>
+                        <div class="skill-requirement">Треб: Сильный клик 3+</div>
+                    </div>
+                    <div class="skill-node" id="node-auto" onclick="buySkill('auto')">
+                        <div class="skill-icon">🤖</div>
+                        <div class="skill-name">Авто-кликер</div>
+                        <div class="skill-level">Ур. <span id="level-auto">0</span></div>
+                        <div class="skill-price"><span id="price-auto">100</span> 🪙</div>
+                    </div>
+                </div>
+
+                <!-- Tier 3 -->
+                <div class="skill-tier">
+                    <div class="skill-node locked" id="node-factory" onclick="buySkill('factory')">
+                        <div class="skill-icon">🏭</div>
+                        <div class="skill-name">Фабрика</div>
+                        <div class="skill-level">Ур. <span id="level-factory">0</span></div>
+                        <div class="skill-price"><span id="price-factory">1000</span> 🪙</div>
+                        <div class="skill-requirement">Треб: Авто-кликер 2+</div>
+                    </div>
+                    <div class="skill-node locked" id="node-turbo" onclick="buySkill('turbo')">
+                        <div class="skill-icon">🚀</div>
+                        <div class="skill-name">Турбо x2</div>
+                        <div class="skill-level">Ур. <span id="level-turbo">0</span></div>
+                        <div class="skill-price"><span id="price-turbo">1000</span> 🪙</div>
+                        <div class="skill-requirement">Треб: Мега клик 2+</div>
+                    </div>
+                </div>
+
+                <!-- Tier 4 -->
+                <div class="skill-tier">
+                    <div class="skill-node locked" id="node-ultimate" onclick="buySkill('ultimate')">
+                        <div class="skill-icon">👑</div>
+                        <div class="skill-name">Абсолют</div>
+                        <div class="skill-level">Ур. <span id="level-ultimate">0</span></div>
+                        <div class="skill-price"><span id="price-ultimate">500000</span> 🪙</div>
+                        <div class="skill-requirement">Треб: Турбо 1+ и Фабрика 3+</div>
+                    </div>
+                </div>
             </div>
-            <button class="btn" style="width:100px; padding:10px;" onclick="buyUpgrade(2)">КУПИТЬ</button>
         </div>
-    </div>
 
-    <div class="memes">
-        <img src="IMG_20260101_145923_474.jpg">
-        <img src="IMG_20260101_151706_375.jpg">
-        <img src="IMG_20260101_145902_173.jpg">
-        <img src="IMG_20260101_145849_625.jpg">
-        <img src="IMG_20260101_151704_265.jpg">
-    </div>
+        <div class="leaderboard">
+            <h2>🏆 Топ игроков 🏆</h2>
+            <ul class="leaderboard-list" id="leaderboardList"></ul>
+        </div>
 
-    <script>
-        let balance = BigInt(localStorage.getItem('fugu_bal_v2') || "0");
-        let tapPower = parseInt(localStorage.getItem('fugu_power_v2') || "10");
-        let count1 = parseInt(localStorage.getItem('fugu_cnt1') || "0");
-        let count2 = parseInt(localStorage.getItem('fugu_cnt2') || "0");
-
-        const basePrice1 = 1000;
-        const basePrice2 = 5000;
-
-        function getPrice(base, count) {
-            return Math.floor(base * Math.pow(1.5, count));
-        }
-
-        function update() {
-            document.getElementById('balance').innerText = balance.toLocaleString();
-            document.getElementById('tap-val').innerText = tapPower.toLocaleString();
-            
-            document.getElementById('price1').innerText = getPrice(basePrice1, count1).toLocaleString() + "$";
-            document.getElementById('price2').innerText = getPrice(basePrice2, count2).toLocaleString() + "$";
-            document.getElementById('lvl1').innerText = "Lvl " + count1;
-            document.getElementById('lvl2').innerText = "Lvl " + count2;
-
-            localStorage.setItem('fugu_bal_v2', balance.toString());
-            localStorage.setItem('fugu_power_v2', tapPower.toString());
-            localStorage.setItem('fugu_cnt1', count1.toString());
-            localStorage.setItem('fugu_cnt2', count2.toString());
-        }
-
-        function tap() {
-            balance += BigInt(tapPower);
-            update();
-        }
-
-        function playSlots() {
-            let betInput = document.getElementById('bet-amount').value;
-            let bet = BigInt(betInput || 0);
-
-            if (bet <= 0n) { alert("Ставь нормально!"); return; }
-            if (bet > balance) { alert("Ты банкрот для таких ставок!"); return; }
-
-            balance -= bet;
-            let s = ['🦆', '🐡', '💎', '7', '💩'];
-            let r = [s[Math.floor(Math.random()*5)], s[Math.floor(Math.random()*5)], s[Math.floor(Math.random()*5)]];
-            document.getElementById('slots').innerText = r.join(' ');
-            
-            // Логика выигрыша
-            if (r.includes('💩')) {
-                // Ставка просто сгорела
-            } else if (r[0] === r[1] && r[1] === r[2]) {
-                balance += bet * 10n; // Джекпот x10
-                alert("ДЖЕКПОТ x10!");
-            } else if (r[0] === r[1] || r[1] === r[2] || r[0] === r[2]) {
-                balance += bet * 2n; // Выигрыш x2
-            }
-            
-            update();
-        }
-
-        function buyUpgrade(type) {
-            if (type === 1) {
-                let cost = BigInt(getPrice(basePrice1, count1));
-                if (balance >= cost) { balance -= cost; tapPower += 5; count1++; update(); }
-            } else if (type === 2) {
-                let cost = BigInt(getPrice(basePrice2, count2));
-                if (balance >= cost) { balance -= cost; tapPower += 25; count2++; update(); }
-            }
-        }
-
-        document.getElementById('u-nick').innerText = localStorage.getItem('fugu_nick') || "FuguSUS";
-        update();
-    </script>
-</body>
-</html>
+        <div class="game-section">
+            <h2 style="color: #c77dff; text-align: center; margin-bottom: 20px; text-shadow: 0 0 15px rgba(138, 43, 226, 0.6);">🎮 Поймай фугу!</h2>
+            <div style="text-align: center; color: #b8b8d1; margin-bottom: 15px;">
+                Кликай по фугу! Каждое попадание = <span style="color: #10b981; font-weight: bold;">+5 монет</span>
+            </div>
+            <div id="catchGame" style="position: relative; width: 100%; height: 300px; background: rgba(10, 10, 15, 0.9); border-radius: 15px; border: 2px solid rgba(138, 43, 226, 0.3); overflow: hidden; cursor: crosshair;">
+                <div id="gameScore" style="position: absolute; top: 10px; left: 10px; color: #c77dff; font-weight: bold; font-size: 1.2em; z-index: 10;
