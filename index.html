@@ -2,447 +2,254 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fugu Clicker | Save & Custom</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Fugu Clicker TWA</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        /* --- ДИЗАЙН (CSS) --- */
         :root {
-            --bg-color: #121212;
-            --card-bg: #1e1e1e;
-            --accent: #bb86fc; 
-            --gold: #ffd700;
-            --danger: #cf6679;
-            --text: #e0e0e0;
+            --bg-color: #000;
+            --tg-theme-bg-color: #000;
+            --neon-purp: #bc13fe;
+            --neon-org: #ff9e00;
+            --text-color: #ffffff;
         }
 
         body {
-            font-family: 'Courier New', Courier, monospace;
-            background-color: var(--bg-color);
-            color: var(--text);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--tg-theme-bg-color);
+            color: var(--text-color);
             margin: 0;
             padding: 0;
             display: flex;
             flex-direction: column;
             align-items: center;
-            min-height: 100vh;
-            user-select: none; /* Чтобы текст не выделялся при кликах */
+            overflow-x: hidden;
+            touch-action: manipulation; /* Убирает задержку клика на смартфонах */
         }
 
-        h1, h2, h3 { margin: 0; font-weight: normal; }
-
-        /* Шапка */
+        /* Стиль для шапки ТГ */
         header {
             width: 100%;
-            padding: 20px;
-            background: rgba(30, 30, 30, 0.8);
-            border-bottom: 1px solid #333;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 15px;
-            position: sticky;
-            top: 0;
-            z-index: 10;
-            backdrop-filter: blur(5px);
-        }
-
-        .input-group { display: flex; gap: 10px; }
-        
-        input {
-            background: #000;
-            border: 1px solid #444;
-            color: var(--accent);
-            padding: 8px;
-            font-family: inherit;
+            padding: 20px 0;
             text-align: center;
-            outline: none;
+            border-bottom: 1px solid var(--neon-purp);
+            box-shadow: 0 4px 15px rgba(188, 19, 254, 0.2);
+            background: rgba(0,0,0,0.8);
         }
 
-        button {
-            cursor: pointer;
-            font-family: inherit;
-            font-weight: bold;
-            transition: 0.2s;
+        #user-info {
+            font-size: 1.2rem;
+            color: var(--neon-org);
+            text-shadow: 0 0 10px var(--neon-org);
         }
 
-        .save-btn {
-            background: var(--accent);
-            border: none;
-            color: #000;
-            padding: 8px 15px;
-        }
-        
-        .save-btn:hover { opacity: 0.8; }
-
-        /* Основной контент */
-        main {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 40px;
-            padding: 40px 20px;
-            width: 100%;
-            max-width: 500px;
+        .balance-container {
+            font-size: 3rem;
+            margin: 30px 0;
+            font-weight: 900;
+            color: #fff;
+            text-shadow: 0 0 20px var(--neon-purp);
         }
 
-        /* Баланс */
-        .score-board {
-            font-size: 2.5rem;
-            color: var(--gold);
-            text-shadow: 0 0 15px rgba(255, 215, 0, 0.2);
-            font-weight: bold;
-        }
-
-        /* Фугу Кликер */
-        .fugu-container {
+        /* Фугу */
+        .fugu-btn {
+            font-size: 150px;
             cursor: pointer;
             transition: transform 0.05s;
-            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+            filter: drop-shadow(0 0 20px var(--neon-purp));
         }
-        .fugu-container:active { transform: scale(0.92); }
+        .fugu-btn:active { transform: scale(0.9); }
 
-        .fugu-emoji {
-            font-size: 140px;
-            filter: drop-shadow(0 0 30px rgba(187, 134, 252, 0.3));
-        }
-
-        /* Слоты (Custom Design) */
-        .slots-machine {
-            background: linear-gradient(145deg, #252525, #1a1a1a);
-            padding: 25px;
-            border-radius: 15px;
-            border: 1px solid #333;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.5);
-            width: 100%;
+        /* Слоты */
+        .casino-card {
+            background: #111;
+            width: 90%;
+            max-width: 400px;
+            border-radius: 20px;
+            border: 2px solid var(--neon-org);
+            padding: 20px;
+            margin-top: 30px;
             text-align: center;
         }
 
-        .slots-window {
-            background: #000;
-            border: 2px solid #555;
-            border-radius: 10px;
-            margin: 20px 0;
-            padding: 15px;
+        .slot-row {
             display: flex;
             justify-content: center;
             gap: 15px;
             font-size: 3rem;
-            overflow: hidden;
+            margin: 20px 0;
+            background: #000;
+            padding: 10px;
+            border-radius: 10px;
         }
 
-        /* Анимация прокрутки каждого символа */
-        .slot-item {
-            width: 60px;
-            text-align: center;
-        }
-
-        .spin-btn {
-            background: var(--danger);
+        .btn-main {
+            background: var(--neon-purp);
             color: #fff;
             border: none;
-            padding: 15px 0;
-            width: 100%;
+            padding: 15px 30px;
+            border-radius: 12px;
             font-size: 1.2rem;
-            text-transform: uppercase;
-            border-radius: 5px;
-            box-shadow: 0 5px 0 #914552; /* 3D эффект кнопки */
-        }
-        .spin-btn:active {
-            box-shadow: 0 2px 0 #914552;
-            transform: translateY(3px);
-        }
-        .spin-btn:disabled {
-            background: #555;
-            box-shadow: none;
-            cursor: not-allowed;
-            transform: translateY(3px);
-        }
-
-        /* Лидерборд */
-        .leaderboard {
+            font-weight: bold;
             width: 100%;
-            background: var(--card-bg);
-            border: 1px solid #333;
-            border-radius: 10px;
-            padding: 15px;
+            box-shadow: 0 0 15px var(--neon-purp);
         }
-        .row {
-            display: flex;
-            justify-content: space-between;
-            padding: 10px 0;
-            border-bottom: 1px solid #2a2a2a;
-        }
-        .durov { color: #0088cc; font-weight: bold; }
-        .you { color: var(--accent); font-weight: bold; }
 
-        /* Подвал */
-        footer {
-            margin-top: auto;
+        /* Мемы */
+        .meme-gallery {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
             padding: 20px;
-            text-align: center;
-            border-top: 1px solid #333;
-            width: 100%;
-            background: #000;
+            width: 90%;
         }
-        
-        .warning {
-            color: #555;
-            font-size: 0.65rem;
+        .meme-item {
+            width: 100%;
+            border-radius: 10px;
             border: 1px solid #333;
-            padding: 10px;
-            margin-bottom: 15px;
-            display: inline-block;
         }
 
-        .reset-btn {
-            background: transparent;
-            border: 1px solid #444;
-            color: #666;
-            font-size: 0.7rem;
-            padding: 5px 10px;
-            margin-top: 10px;
+        .tg-channel-btn {
+            background: #0088cc;
+            color: white;
+            text-decoration: none;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+            display: block;
+            width: 80%;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        /* Анимация клика (+1) */
+        .plus-one {
+            position: absolute;
+            color: var(--neon-org);
+            font-weight: bold;
+            animation: moveUp 0.5s ease-out forwards;
+            pointer-events: none;
+        }
+
+        @keyframes moveUp {
+            0% { transform: translateY(0); opacity: 1; }
+            100% { transform: translateY(-100px); opacity: 0; }
         }
     </style>
 </head>
 <body>
 
-    <header>
-        <h1 style="letter-spacing: 3px;">FUGU CLICKER</h1>
-        <div class="input-group">
-            <input type="text" id="nicknameInput" placeholder="Твой никнейм" maxlength="12">
-            <button class="save-btn" onclick="setNickname()">СОХРАНИТЬ</button>
-        </div>
-    </header>
+<header>
+    <div id="user-info">Загрузка игрока...</div>
+</header>
 
-    <main>
-        <div class="score-board">
-            <span id="score">0</span> <span style="font-size:1rem; color:#888;">$FUGU</span>
-        </div>
+<div class="balance-container">
+    <span id="balance">0</span> 🐡
+</div>
 
-        <div class="fugu-container" onclick="clickFugu()">
-            <div class="fugu-emoji">🐡</div>
-        </div>
-        <p style="color: #666; font-size: 0.8rem;">Tap to mine crypto</p>
+<div class="fugu-btn" id="fuguClicker">🐡</div>
 
-        <div class="slots-machine">
-            <h3>🎰 MEME CASINO 🎰</h3>
-            
-            <div class="slots-window">
-                <div class="slot-item" id="slot1">❓</div>
-                <div class="slot-item" id="slot2">❓</div>
-                <div class="slot-item" id="slot3">❓</div>
-            </div>
+<div class="casino-card">
+    <div style="color: var(--neon-org); font-weight: bold;">FUGU SLOTS</div>
+    <div class="slot-row">
+        <div id="s1">🗿</div>
+        <div id="s2">🗿</div>
+        <div id="s3">🗿</div>
+    </div>
+    <button class="btn-main" onclick="spin()">КРУТИТЬ (500)</button>
+</div>
 
-            <div id="slot-msg" style="min-height: 20px; margin-bottom: 10px; color: var(--gold);"></div>
+<a href="https://t.me/Logovo_bomja_fugu" class="tg-channel-btn">ПОДПИСАТЬСЯ НА ТГК</a>
 
-            <button class="spin-btn" id="spinBtn" onclick="spinSlots()">
-                КРУТИТЬ (<span id="costDisplay">500</span>)
-            </button>
-        </div>
+<div class="meme-gallery">
+    <img src="IMG_20260101_145849_625.jpg" class="meme-item">
+    <img src="IMG_20260101_145923_474.jpg" class="meme-item">
+    <img src="IMG_20260101_145902_173.jpg" class="meme-item">
+    <img src="IMG_20260101_151706_375.jpg" class="meme-item">
+</div>
 
-        <div class="leaderboard">
-            <h3 style="text-align:center; margin-bottom:10px; color:#fff;">FORBES LIST</h3>
-            
-            <div class="row">
-                <span>1. <span class="durov">Pavel Durov</span> 💎</span>
-                <span>&infin;</span>
-            </div>
+<script>
+    const tg = window.Telegram.WebApp;
+    tg.expand(); // Раскрыть на всё окно
 
-            <div class="row">
-                <span class="you" id="leaderboardName">Аноним</span>
-                <span id="leaderboardScore">0</span>
-            </div>
-            
-            <div class="row" style="color: #555;">
-                <span>3. Elon Musk</span>
-                <span>999999</span>
-            </div>
-        </div>
-    </main>
+    let balance = parseInt(localStorage.getItem('fuguBalance')) || 0;
+    const symbols = ['💎', '💰', '🤡', '💀', '🐡'];
 
-    <footer>
-        <div class="warning">
-            ⚠ ВНИМАНИЕ: СИМУЛЯТОР АЗАРТНЫХ ИГР. <br>
-            Все совпадения случайны. Монеты не имеют ценности. <br>
-            Не играйте в реальные казино, вы проиграете квартиру.
-        </div>
-        <br>
-        <a href="memes.html" style="color:var(--accent); text-decoration:none; font-size:1.2rem; font-weight:bold;">
-            [ 📂 СЕКРЕТНЫЕ МЕМЫ ]
-        </a>
-        <br>
-        <button class="reset-btn" onclick="resetProgress()">Сбросить прогресс</button>
-    </footer>
+    // Инициализация данных игрока из Telegram
+    const userDisplay = document.getElementById('user-info');
+    if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
+        userDisplay.innerText = `Босс: ${tg.initDataUnsafe.user.first_name}`;
+    } else {
+        userDisplay.innerText = "Босс: Анонимный Фугу";
+    }
 
-    <script>
-        /* ================= НАСТРОЙКИ СЛОТОВ (МОЖНО МЕНЯТЬ) ================= */
-        // Можешь менять смайлики на свои. Это твои "кастомные" символы.
-        const slotSymbols = ['🍒', '💩', '🤡', '💀', '🗿', '💎', '🐡']; 
+    const balanceEl = document.getElementById('balance');
+    const fuguBtn = document.getElementById('fuguClicker');
+
+    function updateBalance() {
+        balanceEl.innerText = balance;
+        localStorage.setItem('fuguBalance', balance);
+    }
+
+    // Клик с вибрацией
+    fuguBtn.addEventListener('click', (e) => {
+        balance++;
+        updateBalance();
         
-        // Цена за прокрутку
-        const spinPrice = 500; 
+        // Вибрация (только в ТГ на телефоне)
+        tg.HapticFeedback.impactOccurred('medium');
+
+        // Создаем текст +1
+        const p1 = document.createElement('div');
+        p1.innerText = "+1";
+        p1.className = "plus-one";
+        p1.style.left = e.pageX + "px";
+        p1.style.top = e.pageY + "px";
+        document.body.appendChild(p1);
+        setTimeout(() => p1.remove(), 500);
+    });
+
+    // Слоты
+    function spin() {
+        if (balance < 500) {
+            tg.showAlert("Иди работай, бомж! Нужно 500 монет.");
+            return;
+        }
         
-        // Награды
-        const rewards = {
-            '🐡': 100000, // Джекпот (3 рыбы)
-            '💎': 50000,  // Алмазы
-            '🗿': 25000,  // Моаи
-            'default': 5000 // Любые другие 3 совпадения
-        };
-        /* =================================================================== */
+        balance -= 500;
+        updateBalance();
+        tg.HapticFeedback.notificationOccurred('warning');
 
-        // Состояние игры
-        let gameState = {
-            balance: 0,
-            nickname: "Аноним"
-        };
-
-        // Элементы
-        const elScore = document.getElementById('score');
-        const elLbScore = document.getElementById('leaderboardScore');
-        const elLbName = document.getElementById('leaderboardName');
-        const elMsg = document.getElementById('slot-msg');
-        const elInput = document.getElementById('nicknameInput');
-        const elCost = document.getElementById('costDisplay');
-        const elSlot1 = document.getElementById('slot1');
-        const elSlot2 = document.getElementById('slot2');
-        const elSlot3 = document.getElementById('slot3');
-        const elSpinBtn = document.getElementById('spinBtn');
-
-        // --- 1. ЗАГРУЗКА И СОХРАНЕНИЕ (ИНВЕНТАРЬ) ---
-
-        // Загрузка при старте
-        window.onload = function() {
-            elCost.innerText = spinPrice;
-            loadGame();
-        };
-
-        function saveGame() {
-            // Сохраняем объект gameState в память браузера
-            localStorage.setItem('fuguClickerSave', JSON.stringify(gameState));
-        }
-
-        function loadGame() {
-            const savedData = localStorage.getItem('fuguClickerSave');
-            if (savedData) {
-                gameState = JSON.parse(savedData);
+        let count = 0;
+        const interval = setInterval(() => {
+            document.getElementById('s1').innerText = symbols[Math.floor(Math.random()*symbols.length)];
+            document.getElementById('s2').innerText = symbols[Math.floor(Math.random()*symbols.length)];
+            document.getElementById('s3').innerText = symbols[Math.floor(Math.random()*symbols.length)];
+            count++;
+            if(count > 10) {
+                clearInterval(interval);
+                checkWin();
             }
-            // Обновляем вид
-            updateUI();
-            elInput.value = gameState.nickname !== "Аноним" ? gameState.nickname : "";
+        }, 100);
+    }
+
+    function checkWin() {
+        const s1 = document.getElementById('s1').innerText;
+        const s2 = document.getElementById('s2').innerText;
+        const s3 = document.getElementById('s3').innerText;
+
+        if (s1 === s2 && s2 === s3) {
+            let win = 5000;
+            if (s1 === '🐡') win = 50000;
+            balance += win;
+            tg.showAlert(`ДЖЕКПОТ! Ты поднял ${win} монет!`);
+            tg.HapticFeedback.notificationOccurred('success');
         }
+        updateBalance();
+    }
 
-        function resetProgress() {
-            if(confirm("Точно удалить весь прогресс?")) {
-                localStorage.removeItem('fuguClickerSave');
-                location.reload();
-            }
-        }
-
-        // --- 2. ИГРОВАЯ ЛОГИКА ---
-
-        function updateUI() {
-            elScore.innerText = gameState.balance;
-            elLbScore.innerText = gameState.balance;
-            elLbName.innerText = gameState.nickname;
-            
-            // Если баланс меньше цены спина, кнопка становится серой (визуально)
-            if(gameState.balance < spinPrice) {
-                elSpinBtn.style.opacity = "0.5";
-            } else {
-                elSpinBtn.style.opacity = "1";
-            }
-        }
-
-        function clickFugu() {
-            gameState.balance++;
-            updateUI();
-            saveGame(); // Сохраняем каждый клик (или можно реже)
-        }
-
-        function setNickname() {
-            const val = elInput.value.trim();
-            if(val) {
-                gameState.nickname = val;
-                updateUI();
-                saveGame();
-                alert("Ник обновлен и сохранен!");
-            }
-        }
-
-        // --- 3. ЛОГИКА СЛОТОВ ---
-
-        function spinSlots() {
-            if (gameState.balance < spinPrice) {
-                elMsg.innerText = "Мало денег! Кликай фугу!";
-                elMsg.style.color = "var(--danger)";
-                return;
-            }
-
-            // Списание
-            gameState.balance -= spinPrice;
-            updateUI();
-            saveGame();
-
-            // Старт анимации
-            elSpinBtn.disabled = true;
-            elMsg.innerText = "Rolling...";
-            elMsg.style.color = "#fff";
-
-            let spins = 0;
-            // Быстрая смена символов (эффект вращения)
-            const animationInterval = setInterval(() => {
-                elSlot1.innerText = getRandomSymbol();
-                elSlot2.innerText = getRandomSymbol();
-                elSlot3.innerText = getRandomSymbol();
-                spins++;
-                
-                if(spins > 15) { // Количество "мельканий"
-                    clearInterval(animationInterval);
-                    finalizeResult();
-                }
-            }, 80); // Скорость смены
-        }
-
-        function finalizeResult() {
-            // Определяем реальный результат
-            const res1 = getRandomSymbol();
-            const res2 = getRandomSymbol();
-            const res3 = getRandomSymbol();
-
-            elSlot1.innerText = res1;
-            elSlot2.innerText = res2;
-            elSlot3.innerText = res3;
-            
-            elSpinBtn.disabled = false;
-
-            // Проверка на победу (3 одинаковых)
-            if (res1 === res2 && res2 === res3) {
-                // Ищем награду в настройках, или берем дефолтную
-                const prize = rewards[res1] || rewards['default'];
-                
-                gameState.balance += prize;
-                elMsg.innerText = `JACKPOT!!! +${prize}`;
-                elMsg.style.color = "var(--gold)";
-                
-                // Эффект победы
-                elSlot1.style.textShadow = "0 0 10px white";
-                setTimeout(() => elSlot1.style.textShadow = "none", 1000);
-            } else {
-                elMsg.innerText = "Лудка — зло. Попробуй еще.";
-                elMsg.style.color = "#666";
-            }
-
-            updateUI();
-            saveGame();
-        }
-
-        function getRandomSymbol() {
-            const randomIndex = Math.floor(Math.random() * slotSymbols.length);
-            return slotSymbols[randomIndex];
-        }
-
-    </script>
+    updateBalance();
+</script>
 </body>
 </html>
