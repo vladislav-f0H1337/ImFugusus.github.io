@@ -113,6 +113,10 @@
             filter: drop-shadow(0 0 20px rgba(138, 43, 226, 0.5));
         }
 
+        .fugu-button:hover {
+            transform: scale(1.05);
+        }
+
         .fugu-button:active {
             transform: scale(0.95);
         }
@@ -500,13 +504,13 @@
         <div class="game-section">
             <div class="nickname-section">
                 <input type="text" id="nicknameInput" placeholder="Введите свой ник" maxlength="20">
-                <button onclick="setNickname()">Установить ник</button>
+                <button id="setNicknameBtn">Установить ник</button>
                 <div class="current-nickname" id="currentNickname">Ник: Аноним</div>
             </div>
 
             <div class="clicker-area">
                 <div class="score">Монет: <span id="score">0</span> 🪙</div>
-                <button class="fugu-button" onclick="clickFugu()">🐡</button>
+                <button class="fugu-button" id="fuguBtn">🐡</button>
                 <div class="stats">
                     <div class="stat-item">Клик = <span id="clickValue">1</span> 🪙</div>
                     <div class="stat-item">Пассивный доход: <span id="passiveIncome">0</span> 🪙/сек</div>
@@ -530,11 +534,11 @@
                 <div class="slots-display">
                     <div class="slot" id="slot1">🍒</div>
                     <div class="slot" id="slot2">🍋</div>
-                    <div class="slot" id="slot3">🐡</div>
+                    <div class="slot" id="slot3">🍊</div>
                 </div>
 
-                <button class="spin-button" onclick="spinSlots()" id="spinButton">
-                    ДЕП! ДЕП!
+                <button class="spin-button" id="spinButton">
+                    КРУТИТЬ
                 </button>
                 <div class="result-message" id="resultMessage"></div>
 
@@ -551,58 +555,58 @@
             <div class="skill-tree">
                 <!-- Tier 1 -->
                 <div class="skill-tier">
-                    <div class="skill-node" id="node-click" onclick="buySkill('click')">
+                    <div class="skill-node" id="node-click" data-skill="click">
                         <div class="skill-icon">👆</div>
                         <div class="skill-name">Сильный клик</div>
                         <div class="skill-level">Ур. <span id="level-click">0</span></div>
-                        <div class="skill-price"><span id="price-click">55</span> 🪙</div>
+                        <div class="skill-price"><span id="price-click">100</span> 🪙</div>
                     </div>
-                    <div class="skill-node" id="node-crit" onclick="buySkill('crit')">
+                    <div class="skill-node" id="node-crit" data-skill="crit">
                         <div class="skill-icon">💥</div>
                         <div class="skill-name">Крит. удар</div>
                         <div class="skill-level">Ур. <span id="level-crit">0</span></div>
-                        <div class="skill-price"><span id="price-crit">50</span> 🪙</div>
+                        <div class="skill-price"><span id="price-crit">250</span> 🪙</div>
                     </div>
                 </div>
 
                 <!-- Tier 2 -->
                 <div class="skill-tier">
-                    <div class="skill-node locked" id="node-megaclick" onclick="buySkill('megaclick')">
+                    <div class="skill-node locked" id="node-megaclick" data-skill="megaclick">
                         <div class="skill-icon">⚡</div>
                         <div class="skill-name">Мега клик</div>
                         <div class="skill-level">Ур. <span id="level-megaclick">0</span></div>
-                        <div class="skill-price"><span id="price-megaclick">250</span> 🪙</div>
+                        <div class="skill-price"><span id="price-megaclick">1000</span> 🪙</div>
                         <div class="skill-requirement">Треб: Сильный клик 3+</div>
                     </div>
-                    <div class="skill-node" id="node-auto" onclick="buySkill('auto')">
+                    <div class="skill-node" id="node-auto" data-skill="auto">
                         <div class="skill-icon">🤖</div>
                         <div class="skill-name">Авто-кликер</div>
                         <div class="skill-level">Ур. <span id="level-auto">0</span></div>
-                        <div class="skill-price"><span id="price-auto">100</span> 🪙</div>
+                        <div class="skill-price"><span id="price-auto">500</span> 🪙</div>
                     </div>
                 </div>
 
                 <!-- Tier 3 -->
                 <div class="skill-tier">
-                    <div class="skill-node locked" id="node-factory" onclick="buySkill('factory')">
+                    <div class="skill-node locked" id="node-factory" data-skill="factory">
                         <div class="skill-icon">🏭</div>
                         <div class="skill-name">Фабрика</div>
                         <div class="skill-level">Ур. <span id="level-factory">0</span></div>
-                        <div class="skill-price"><span id="price-factory">1000</span> 🪙</div>
+                        <div class="skill-price"><span id="price-factory">2500</span> 🪙</div>
                         <div class="skill-requirement">Треб: Авто-кликер 2+</div>
                     </div>
-                    <div class="skill-node locked" id="node-turbo" onclick="buySkill('turbo')">
+                    <div class="skill-node locked" id="node-turbo" data-skill="turbo">
                         <div class="skill-icon">🚀</div>
                         <div class="skill-name">Турбо x2</div>
                         <div class="skill-level">Ур. <span id="level-turbo">0</span></div>
-                        <div class="skill-price"><span id="price-turbo">1000</span> 🪙</div>
+                        <div class="skill-price"><span id="price-turbo">5000</span> 🪙</div>
                         <div class="skill-requirement">Треб: Мега клик 2+</div>
                     </div>
                 </div>
 
                 <!-- Tier 4 -->
                 <div class="skill-tier">
-                    <div class="skill-node locked" id="node-ultimate" onclick="buySkill('ultimate')">
+                    <div class="skill-node locked" id="node-ultimate" data-skill="ultimate">
                         <div class="skill-icon">👑</div>
                         <div class="skill-name">Абсолют</div>
                         <div class="skill-level">Ур. <span id="level-ultimate">0</span></div>
@@ -613,15 +617,11 @@
             </div>
         </div>
 
-        <div class="leaderboard">
-            <h2>🏆 Топ игроков 🏆</h2>
-            <ul class="leaderboard-list" id="leaderboardList"></ul>
-        </div>
-
         <div class="game-section">
             <h2 style="color: #c77dff; text-align: center; margin-bottom: 20px; text-shadow: 0 0 15px rgba(138, 43, 226, 0.6);">🎮 Поймай фугу!</h2>
             <div style="text-align: center; color: #b8b8d1; margin-bottom: 15px;">
                 Кликай по фугу! Каждое попадание = <span style="color: #10b981; font-weight: bold;">+5 монет</span>
             </div>
             <div id="catchGame" style="position: relative; width: 100%; height: 300px; background: rgba(10, 10, 15, 0.9); border-radius: 15px; border: 2px solid rgba(138, 43, 226, 0.3); overflow: hidden; cursor: crosshair;">
-                <div id="gameScore" style="position: absolute; top: 10px; left: 10px; color: #c77dff; font-weight: bold; font-size: 1.2em; z-index: 10;
+                <div id="gameScore" style="position: absolute; top: 10px; left: 10px; color: #c77dff; font-weight: bold; font-size: 1.2em; z-index: 10;">Счёт: 0</div>
+                <div id="gameTimer" style="position: absolute; top: 10px; right: 10px; color: #fbbf24; font-weight: bold; font-size: 1.2em; z-index: 10;">Вр
